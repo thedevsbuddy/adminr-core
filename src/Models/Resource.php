@@ -1,0 +1,20 @@
+<?php
+
+namespace Devsbuddy\AdminrCore\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Resource extends Model
+{
+    use HasFactory;
+
+    protected $table = 'adminr_resources';
+
+    protected $guarded = ['id'];
+
+    protected $casts = [
+        'controllers' => 'object',
+        'payload' => 'object'
+    ];
+}

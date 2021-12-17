@@ -1,0 +1,8 @@
+    /**
+     * {{MODEL_ENTITY}} {{RELATIONSHIP}} {{WITH_ENTITY}}
+     * @return Illuminate\Database\Eloquent\Relations\{{RELATIONSHIP}}
+     * */
+    public function {{WITH_ENTITY}}()
+    {
+        return $this->{{RELATIONSHIP}}(\App\{{RELATION_NAMESPACE}}{{WITH}}::class);
+    }

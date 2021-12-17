@@ -1,0 +1,9 @@
+        <div class="form-group COL_XS COL_MD COL_LG has-feedback {{ $errors->has('{{FIELD_NAME}}') ? 'has-error' : '' }}">
+            <label>{{ \Lang::has('redprint::strings.{{FIELD_NAME}}') ? trans('redprint::strings.{{FIELD_NAME}}') :  '{{FIELD_NAME_LABEL}}' }} </label>
+            <input class="form-control dateTime" type="text" name="{{FIELD_NAME}}" placeholder="{{FIELD_NAME}}" value="{{ ${{MODEL_ENTITY}}->{{FIELD_NAME}} ?: old('{{FIELD_NAME}}') }}" id="{{FIELD_ID}}dateTime" data-toggle="datetimepicker" data-target="#{{FIELD_ID}}dateTime">
+            @if ($errors->has('{{FIELD_NAME}}'))
+                <span class="help-block">
+                    <strong>{{ $errors->first('{{FIELD_NAME}}') }}</strong>
+                </span>
+            @endif
+        </div>
