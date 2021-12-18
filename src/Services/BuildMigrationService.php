@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class BuildMigrationService extends LiquidBaseService
+class BuildMigrationService extends AdminrCoreService
 {
     protected $migrationTargetPath;
 
@@ -18,7 +18,7 @@ class BuildMigrationService extends LiquidBaseService
      * Prepares the service to generate resource
      *
      * @param Request $request
-     * @return $this|LiquidBaseService
+     * @return $this|AdminrCoreService
      */
     public function prepare(Request $request)
     {
@@ -97,6 +97,12 @@ class BuildMigrationService extends LiquidBaseService
 
                 if ($migration['data_type'] == 'slug') {
                     $data_type = "string";
+                } elseif ($migration['data_type'] == 'file') {
+                    if($migration['file_type'] == 'single'){
+                        $data_type = "string";
+                    } else {
+                        $data_type = "text";
+                    }
                 } else {
                     $data_type = $migration['data_type'];
                 }
@@ -113,19 +119,17 @@ class BuildMigrationService extends LiquidBaseService
                 if (in_array($migration['data_type'], $numericDatatypes)) {
                     $default = floatval($default);
                 }
+
                 if (in_array($migration['data_type'], $integerTypes)) {
                     $default = intval($default);
                 }
+
                 if (!is_null($default)) {
                     $defaultVal = is_numeric($default) ? $default : "\"" . $default . "\"";
                     $migrationFileStmt .= "->default(" . $defaultVal . ")";
                 }
                 $migrationFileStmt .= ";\n\t\t\t";
             }
-        }
-
-        if ($this->hasMedia && !is_null($this->mediaField)) {
-            $migrationFileStmt .= "\$table->string(\"" . Str::snake($this->mediaField) . "\");\n\t\t\t";
         }
 
         $migrationFileStmt .= "\$table->timestamps();";

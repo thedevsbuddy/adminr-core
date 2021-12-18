@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class BuildModelService extends LiquidBaseService
+class BuildModelService extends AdminrCoreService
 {
     protected $modelTargetPath;
 
@@ -14,7 +14,7 @@ class BuildModelService extends LiquidBaseService
      * Prepares the service to generate resource
      *
      * @param Request $request
-     * @return $this|LiquidBaseService
+     * @return $this|AdminrCoreService
      */
     public function prepare(Request $request)
     {
@@ -75,15 +75,37 @@ class BuildModelService extends LiquidBaseService
     {
         $mediaAttributeStmt = '';
 
-        $mediaAttributeStmt .= "public function get" . Str::studly($this->mediaField) . "Attribute(\$value)\n\t";
-        $mediaAttributeStmt .= "{\n\t\t";
-        $mediaAttributeStmt .= "if (Str::contains(request()->url(), 'api')){\n\t\t\t";
-        $mediaAttributeStmt .= "return asset(\$value);\n\t\t";
-        $mediaAttributeStmt .= "}\n\t\t";
-        $mediaAttributeStmt .= "return \$value;\n\t";
-        $mediaAttributeStmt .= "}\n";
+        foreach ($this->request->get('migrations') as $migration) {
+            if ($migration['data_type'] == 'file') {
+                if ($migration['file_type'] == 'single') {
+                    $mediaAttributeStmt .= "public function get" . Str::studly($migration['field_name']) . "Attribute(\$value)\n\t";
+                    $mediaAttributeStmt .= "{\n\t\t";
+                    $mediaAttributeStmt .= "if (Str::contains(request()->url(), 'api')){\n\t\t\t";
+                    $mediaAttributeStmt .= "return asset(\$value);\n\t\t";
+                    $mediaAttributeStmt .= "}\n\t\t";
+                    $mediaAttributeStmt .= "return \$value;\n\t";
+                    $mediaAttributeStmt .= "}\n\n\t";
+                } else {
+                    $mediaAttributeStmt .= "public function get" . Str::studly($migration['field_name']) . "Attribute(\$value)\n\t";
+                    $mediaAttributeStmt .= "{\n\t\t";
+                    $mediaAttributeStmt .= "if (Str::contains(request()->url(), 'api')){\n\t\t\t";
+                    $mediaAttributeStmt .= "\$return = [];\n\t\t\t";
+                    $mediaAttributeStmt .= "foreach(json_decode(\$value) as \$val){\n\t\t\t\t";
+                    $mediaAttributeStmt .= "\$return[] = asset(\$val);\n\t\t\t";
+                    $mediaAttributeStmt .= "}\n\t\t\t";
+                    $mediaAttributeStmt .= "return \$return;\n\t\t";
+                    $mediaAttributeStmt .= "}\n\t\t";
+                    $mediaAttributeStmt .= "\$return = [];\n\t\t";
+                    $mediaAttributeStmt .= "foreach(json_decode(\$value) as \$val){\n\t\t\t";
+                    $mediaAttributeStmt .= "\$return[] = \$val;\n\t\t";
+                    $mediaAttributeStmt .= "}\n\t\t";
+                    $mediaAttributeStmt .= "return \$return;\n\t";
+                    $mediaAttributeStmt .= "}\n\n\t";
+                }
+            }
+        }
 
-        return $this->hasMedia ? $mediaAttributeStmt : null;
+        return $mediaAttributeStmt;
     }
 
 

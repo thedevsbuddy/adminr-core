@@ -15,6 +15,7 @@ class Resource extends Model
 
     protected $casts = [
         'controllers' => 'object',
-        'payload' => 'object'
+        'payload' => 'object',
+        'table_structure' => 'object',
     ];
 }

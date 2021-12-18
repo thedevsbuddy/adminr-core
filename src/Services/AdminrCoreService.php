@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class LiquidBaseService
+class AdminrCoreService
 {
     use HasStubs, CanManageFiles;
 
@@ -23,21 +23,7 @@ class LiquidBaseService
     public $operationDirectory;
 
     public $hasSoftdeletes;
-    public $hasMedia;
-    public $mediaField;
-
-    /**
-     * LiquidBaseService constructor.
-     * @param Request $request
-     */
-//    public function __construct(?Request $request)
-//    {
-//        $this->request = $request;
-//        $this->currentOperationId = Str::random(12);
-//        $this->operationDirectory = 'liquidcms/' . date('Y_m_d_his') . '_' . $this->currentOperationId;
-//        $this->stubsDirectory = storage_path($this->operationDirectory . '/stubs');
-//        $this->initialize();
-//    }
+    public $buildApi;
 
     /**
      * Prepare the service for resource generation
@@ -49,7 +35,7 @@ class LiquidBaseService
     {
         $this->request = $request;
         $this->currentOperationId = Str::random(12);
-        $this->operationDirectory = 'liquidcms/' . date('Y_m_d_his') . '_' . $this->currentOperationId;
+        $this->operationDirectory = 'adminr-core/' . date('Y_m_d_his') . '_' . $this->currentOperationId;
         $this->stubsDirectory = storage_path($this->operationDirectory . '/stubs');
         $this->initialize();
         return $this;
@@ -70,8 +56,7 @@ class LiquidBaseService
         $this->tableName = Str::snake(Str::plural($this->modelName));
         $this->migrationFileName = date('Y_m_d_his') . '_create_' . $this->tableName . '_table';
         $this->hasSoftdeletes = $this->request->get('softdeletes');
-        $this->hasMedia = $this->request->get('has_media');
-        $this->mediaField = Str::snake($this->request->get('media_field'));
+        $this->buildApi = $this->request->get('build_api');
 
         $this->makeDirectory(storage_path($this->operationDirectory . '/stubs'));
         File::copyDirectory(__DIR__ . '/../../resources/stubs/', storage_path($this->operationDirectory . '/stubs'));
@@ -102,6 +87,5 @@ class LiquidBaseService
             File::deleteDirectory(dirname(storage_path($this->operationDirectory . '/stubs')));
         }
     }
-
 
 }

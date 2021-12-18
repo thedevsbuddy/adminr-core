@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\{{MODEL_CLASS}};
 use Illuminate\Http\Request;
-use Devsbuddy\AdminrCore\Http\Controllers\LiquidLiteController;
+use Devsbuddy\AdminrCore\Http\Controllers\AdminrController;
 use Devsbuddy\AdminrCore\Traits\HasResponse;
 use Illuminate\Support\Str;
 
-class {{CONTROLLER_CLASS}} extends LiquidLiteController
+class {{CONTROLLER_CLASS}} extends AdminrController
 {
     use HasResponse;
 

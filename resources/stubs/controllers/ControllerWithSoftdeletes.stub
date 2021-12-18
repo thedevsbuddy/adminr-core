@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\{{MODEL_CLASS}};
 use Illuminate\Http\Request;
-use Devsbuddy\AdminrCore\Http\Controllers\LiquidLiteController;
+use Devsbuddy\AdminrCore\Http\Controllers\AdminrController;
 use Illuminate\Support\Str;
 
-class {{CONTROLLER_CLASS}} extends LiquidLiteController
+class {{CONTROLLER_CLASS}} extends AdminrController
 {
     private $resultLimit;
 
@@ -29,7 +29,7 @@ class {{CONTROLLER_CLASS}} extends LiquidLiteController
             ${{MODEL_ENTITIES}} = ${{MODEL_ENTITIES}}->paginate($this->resultLimit);
             return view('admin.{{MODEL_ENTITIES}}.index', compact('{{MODEL_ENTITIES}}'));
         } catch(\Exception $e){
-            return back()->with('error', 'Error: ' . $e->getMessage());
+            return $this->backError('Error: ' . $e->getMessage());
         }
     }
 
@@ -45,7 +45,7 @@ class {{CONTROLLER_CLASS}} extends LiquidLiteController
         try{
             return view('admin.{{MODEL_ENTITIES}}.show', compact('{{MODEL_ENTITY}}'));
         } catch(\Exception $e){
-            return back()->with("error", "Error: " . $e->getMessage());
+            return $this->backError("Error: " . $e->getMessage());
         }
     }
 
@@ -60,7 +60,7 @@ class {{CONTROLLER_CLASS}} extends LiquidLiteController
         try{
             return view('admin.{{MODEL_ENTITIES}}.create');
         } catch(\Exception $e){
-            return back()->with("error", "Error: " . $e->getMessage());
+            return $this->backError("Error: " . $e->getMessage());
         }
     }
 
@@ -80,9 +80,9 @@ class {{CONTROLLER_CLASS}} extends LiquidLiteController
                 {{SAVE_DATA_STATEMENT}}
             ]);
 
-            return redirect()->route('adminr.{{MODEL_ENTITIES}}.index')->with("success", "{{MODEL_ENTITY}} saved successfully!");
+            return $this->redirectSuccess(route('adminr.{{MODEL_ENTITIES}}.index'), "{{MODEL_ENTITY}} saved successfully!");
         } catch(\Exception $e){
-            return back()->with("error", "Error: " . $e->getMessage());
+            return $this->backError("Error: " . $e->getMessage());
         }
     }
 
@@ -97,7 +97,7 @@ class {{CONTROLLER_CLASS}} extends LiquidLiteController
         try{
             return view('admin.{{MODEL_ENTITIES}}.edit', compact('{{MODEL_ENTITY}}'));
         } catch(\Exception $e){
-            return back()->with("error", "Error: " . $e->getMessage());
+            return $this->backError("Error: " . $e->getMessage());
         }
     }
 
@@ -118,9 +118,9 @@ class {{CONTROLLER_CLASS}} extends LiquidLiteController
                 {{UPDATE_DATA_STATEMENT}}
             ]);
 
-            return redirect()->route('adminr.{{MODEL_ENTITIES}}.index')->with("success", "{{MODEL_ENTITY}} updated successfully!");
+            return $this->redirectSuccess(route('adminr.{{MODEL_ENTITIES}}.index'), "{{MODEL_ENTITY}} updated successfully!");
         } catch(\Exception $e){
-            return back()->with("error", "Error: " . $e->getMessage());
+            return $this->backError("Error: " . $e->getMessage());
         }
     }
 
@@ -136,9 +136,9 @@ class {{CONTROLLER_CLASS}} extends LiquidLiteController
             ${{MODEL_ENTITY}} = {{MODEL_CLASS}}::findOrFail($id);
             ${{MODEL_ENTITY}}->delete();
 
-            return back()->with("success", "{{MODEL_ENTITY}} deleted successfully!");
+            return $this->backSuccess("{{MODEL_ENTITY}} deleted successfully!");
         } catch(\Exception $e){
-            return back()->with("error", "Error: " . $e->getMessage());
+            return $this->backError("Error: " . $e->getMessage());
         }
     }
 
@@ -155,9 +155,9 @@ class {{CONTROLLER_CLASS}} extends LiquidLiteController
             ${{MODEL_ENTITY}} = {{MODEL_CLASS}}::withTrashed()->find($id);
             ${{MODEL_ENTITY}}->restore();
 
-            return back()->with("success", "{{MODEL_ENTITY}} restored successfully!");
+            return $this->backSuccess("{{MODEL_ENTITY}} restored successfully!");
         } catch(\Exception $e){
-            return back()->with("error", "Error: " . $e->getMessage());
+            return $this->backError("Error: " . $e->getMessage());
         }
     }
 
@@ -173,9 +173,9 @@ class {{CONTROLLER_CLASS}} extends LiquidLiteController
             ${{MODEL_ENTITY}} = {{MODEL_CLASS}}::withTrashed()->where('id', $id)->first();
             {{DELETE_FILE_STATEMENT}}
             ${{MODEL_ENTITY}}->forceDelete();
-            return back()->with("success", "{{MODEL_ENTITY}} deleted successfully!");
+            return $this->backSuccess("{{MODEL_ENTITY}} deleted successfully!");
         } catch(\Exception $e){
-            return back()->with("error", "Error: " . $e->getMessage());
+            return $this->backError("Error: " . $e->getMessage());
         }
     }
 }

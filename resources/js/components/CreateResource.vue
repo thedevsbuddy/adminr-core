@@ -1,8 +1,8 @@
 <template>
     <div class="create-resource-component">
         <form method="post" @submit.prevent="generateCrud">
-            <div class="row justify-content-between">
-                <div class="col-lg-3">
+            <div class="row justify-content-start align-items-center">
+                <div class="col-lg-4">
                     <div class="form-group">
                         <label for="model_name">Model name</label>
                         <input type="text" id="model_name" @input="validateModelName" v-model="model"
@@ -24,7 +24,7 @@
                     <div class="form-group text-center">
                         <label>Generate APIs</label>
                         <div class="custom-control text-center custom-switch">
-                            <input type="checkbox" class="custom-control-input" v-model="generate_api"
+                            <input type="checkbox" class="custom-control-input" v-model="build_api"
                                    id="resource_has_media">
                             <label class="custom-control-label" for="resource_has_media"></label>
                         </div>
@@ -180,7 +180,7 @@
                                 <div class="form-group mb-0 text-center">
                                     <div class="custom-control text-center custom-switch">
                                         <input type="checkbox" v-model="migration.show_form"
-                                               class="custom-control-input" :id="'show_form_' + index">
+                                               class="custom-control-input" :id="'show_form_' + index" :class="{'disabled': migration.data_type === 'file'}" :disabled="migration.data_type === 'file'">
                                         <label class="custom-control-label initial"
                                                :for="'show_form_' + index"></label>
                                     </div>
@@ -190,7 +190,7 @@
                                 <div class="form-group mb-0 text-center">
                                     <div class="custom-control text-center custom-switch">
                                         <input type="checkbox" v-model="migration.can_search"
-                                               class="custom-control-input" :id="'can_search_' + index">
+                                               class="custom-control-input" :id="'can_search_' + index" :class="{'disabled': migration.data_type === 'file'}" :disabled="migration.data_type === 'file'">
                                         <label class="custom-control-label initial"
                                                :for="'can_search_' + index"></label>
                                     </div>
@@ -200,7 +200,7 @@
                                 <div class="form-group mb-0 text-center">
                                     <div class="custom-control text-center custom-switch">
                                         <input type="checkbox" v-model="migration.unique" class="custom-control-input"
-                                               :id="'unique_' + index">
+                                               :id="'unique_' + index" :class="{'disabled': migration.data_type === 'file'}" :disabled="migration.data_type === 'file'">
                                         <label class="custom-control-label initial"
                                                :for="'unique_' + index"></label>
                                     </div>
@@ -244,7 +244,7 @@
                     </td>
                     <td>
                         <div class="form-group">
-                            <input type="text" v-model="migration.default" class="form-control"/>
+                        <input type="text" v-model="migration.default" class="form-control" :class="{'disabled': migration.data_type === 'file'}" :disabled="migration.data_type === 'file'"/>
                         </div>
                     </td>
                     <td>
@@ -294,7 +294,7 @@
                 isGenerating: false,
                 model: '',
                 softdeletes: false,
-                generate_api: false,
+                build_api: false,
                 dataTypes: this.datatypes,
                 migrations: [
                     {
@@ -362,12 +362,11 @@
                 let postData = {
                     migrations: this.migrations,
                     model: this.model,
-                    media_type: this.media_type,
                     softdeletes: this.softdeletes,
-                    media_field: this.mediaField,
+                    build_api: this.build_api,
                 };
 
-                axios.post(BASE_URL + "/adminr/generate", postData)
+                axios.post(BASE_URL + "/"+ROUTE_PREFIX+"/generate", postData)
                     .then(response => {
                         this.isGenerating = false;
                         if (response.data.status === 'success') {
@@ -378,6 +377,7 @@
                     })
                     .catch(err => {
                         this.isGenerating = false;
+                        toastr.error(err);
                         console.error(err);
                     });
             },

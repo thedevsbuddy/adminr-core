@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class BuildRoutesService extends LiquidBaseService
+class BuildRoutesService extends AdminrCoreService
 {
     protected $apiRouteTargetPath;
     protected $apiRoutePath;
@@ -21,15 +21,15 @@ class BuildRoutesService extends LiquidBaseService
      * Prepares the service to generate resource
      *
      * @param Request $request
-     * @return $this|LiquidBaseService
+     * @return $this|AdminrCoreService
      */
     public function prepare(Request $request)
     {
         parent::prepare($request);
-        $this->apiRouteTargetPath = base_path() . "/routes/liquid/api/" . $this->modelEntities . "/" . $this->modelEntities . ".json";
-        $this->apiRoutePath = base_path() . '/routes/liquid/api/routes.json';
-        $this->adminRouteTargetPath = base_path() . "/routes/liquid/admin/" . $this->modelEntities . "/" . $this->modelEntities . ".json";
-        $this->adminRoutePath = base_path() . '/routes/liquid/admin/routes.json';
+        $this->apiRouteTargetPath = base_path() . "/routes/adminr/api/" . $this->modelEntities . "/" . $this->modelEntities . ".json";
+        $this->apiRoutePath = base_path() . '/routes/adminr/api/routes.json';
+        $this->adminRouteTargetPath = base_path() . "/routes/adminr/admin/" . $this->modelEntities . "/" . $this->modelEntities . ".json";
+        $this->adminRoutePath = base_path() . '/routes/adminr/admin/routes.json';
         return $this;
     }
 
@@ -43,31 +43,32 @@ class BuildRoutesService extends LiquidBaseService
     public function buildApiRoute()
     {
         try {
-            if ($this->hasSoftdeletes) {
-                $routeFile = $this->getRouteStub('api_entities_with_softdeletes');
-            } else {
-                $routeFile = $this->getRouteStub('api_entities');
+            if ($this->buildApi) {
+                if ($this->hasSoftdeletes) {
+                    $routeFile = $this->getRouteStub('api_entities_with_softdeletes');
+                } else {
+                    $routeFile = $this->getRouteStub('api_entities');
+                }
+
+                $stubPath = $this->hasSoftdeletes
+                    ? $this->getRouteStub('api_entities_with_softdeletes', true)
+                    : $this->getRouteStub('api_entities', true);
+
+                $routeFile = $this->processStub($routeFile);
+
+                $apiRoutesStorage = (array)json_decode(File::get($this->apiRoutePath));
+
+                if (!isset($apiRoutesStorage[$this->modelEntities])) {
+                    $apiRoutesStorage[$this->modelEntities] = $this->modelEntities . ".json";
+                }
+
+                $this->makeDirectory($this->apiRouteTargetPath);
+
+                File::put($stubPath, $routeFile);
+                File::copy($stubPath, $this->apiRouteTargetPath);
+                File::put($this->apiRouteTargetPath, $routeFile);
+                File::put($this->apiRoutePath, json_encode((object)$apiRoutesStorage));
             }
-
-            $stubPath = $this->hasSoftdeletes
-                ? $this->getRouteStub('api_entities_with_softdeletes', true)
-                : $this->getRouteStub('api_entities', true);
-
-            $routeFile = $this->processStub($routeFile);
-
-            $apiRoutesStorage = (array)json_decode(File::get($this->apiRoutePath));
-
-            if (!isset($apiRoutesStorage[$this->modelEntities])) {
-                $apiRoutesStorage[$this->modelEntities] = $this->modelEntities . ".json";
-            }
-
-            $this->makeDirectory($this->apiRouteTargetPath);
-
-            File::put($stubPath, $routeFile);
-            File::copy($stubPath, $this->apiRouteTargetPath);
-            File::put($this->apiRouteTargetPath, $routeFile);
-            File::put($this->apiRoutePath, json_encode((object)$apiRoutesStorage));
-
             return $this;
         } catch (\Exception $e) {
             throw $e;
@@ -170,8 +171,8 @@ class BuildRoutesService extends LiquidBaseService
     public function rollback()
     {
         if (!is_null($this->modelEntities)) {
-            $this->deleteDir(base_path() . '/routes/liquid/admin/' . $this->modelEntities);
-            $this->deleteDir(base_path() . '/routes/liquid/api/' . $this->modelEntities);
+            $this->deleteDir(base_path() . '/routes/adminr/admin/' . $this->modelEntities);
+            $this->deleteDir(base_path() . '/routes/adminr/api/' . $this->modelEntities);
         }
 
         $adminRoutesStorage = (array)json_decode(File::get($this->adminRoutePath));
@@ -179,7 +180,6 @@ class BuildRoutesService extends LiquidBaseService
             unset($adminRoutesStorage[$this->modelEntities]);
         }
         File::put($this->adminRoutePath, json_encode((object)$adminRoutesStorage));
-
 
         $apiRoutesStorage = (array)json_decode(File::get($this->apiRoutePath));
         if (isset($apiRoutesStorage[$this->modelEntities])) {

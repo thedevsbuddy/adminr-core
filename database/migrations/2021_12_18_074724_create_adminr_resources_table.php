@@ -21,6 +21,7 @@ class CreateAdminrResourcesTable extends Migration
             $table->string('migration')->nullable();
             $table->string('table')->nullable();
             $table->json('payload')->nullable();
+            $table->json('table_structure')->nullable();
             $table->timestamps();
         });
     }

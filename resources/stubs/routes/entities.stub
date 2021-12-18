@@ -1,7 +1,7 @@
 {
     "index": {
         "route": "{{MODEL_ENTITIES}}",
-        "middleware": ["web", "permission:{{MODEL_ENTITIES}}_show_list"],
+        "middleware": ["web", "permission:{{MODEL_ENTITIES}}_list"],
         "name": "{{MODEL_ENTITIES}}.index",
         "controller": "App\\Http\\Controllers\\Admin\\{{CONTROLLER_CLASS}}",
         "action": "index",

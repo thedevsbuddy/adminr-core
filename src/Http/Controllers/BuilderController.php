@@ -31,12 +31,12 @@ class BuilderController extends Controller
 
     public function __construct()
     {
-        $this->createCrudRecordService = new CreateCrudRecordService();
+//        $this->createCrudRecordService = new CreateCrudRecordService();
         $this->buildControllersService = new BuildControllersService();
         $this->buildModelService = new BuildModelService();
         $this->buildMigrationService = new BuildMigrationService();
         $this->buildRouteService = new BuildRoutesService();
-        $this->buildViewsService = new BuildViewsService();
+//        $this->buildViewsService = new BuildViewsService();
     }
 
     public function index()
@@ -49,20 +49,15 @@ class BuilderController extends Controller
         }
     }
 
-
-
     public function build(Request $request)
     {
-        if($this->resourceExists($request)){
-            return response()->json([
-                'status' => 'error',
-                'message' => 'CRUD already exist!'
-            ], 200);
-        }
+//        if($this->resourceExists($request)){
+//            return response()->json(['status' => 'error', 'message' => 'CRUD already exist!'], 200);
+//        }
 
         try{
 
-            $this->createCrudRecordService->store($request);
+//            $this->createCrudRecordService->store($request);
 
             $this->buildControllersService
                 ->prepare($request)
@@ -71,35 +66,35 @@ class BuilderController extends Controller
                 ->cleanUp();
 
 
-            $this->createCrudRecordService->update([
-                'name' => Str::title($this->buildControllersService->modelEntities),
-                'controllers' => [
-                    'api' => $this->buildControllersService->controllerName,
-                    'admin' => $this->buildControllersService->controllerName,
-                ],
-                'menu' => [
-                    'label' => Str::studly($this->buildControllersService->modelEntities),
-                    'route' => 'adminr.' . $this->buildControllersService->modelEntities . '.index'
-                ],
-                'table' => $this->buildControllersService->tableName,
-                'payload' => [
-                    'model' => $this->buildControllersService->modelName . '.php',
-                    'views' => [
-                        'index' => 'admin/' . $this->buildControllersService->modelEntities . '/index.blade.php',
-                        'create' => 'admin/' . $this->buildControllersService->modelEntities . '/create.blade.php',
-                        'edit' => 'admin/' . $this->buildControllersService->modelEntities . '/edit.blade.php',
-                    ],
-                    'migration' => config('liquid.api.version'),
-                    'controllers' => [
-                        'api' => $this->buildControllersService->controllerName . '.php',
-                        'admin' => $this->buildControllersService->controllerName . '.php',
-                    ],
-                    'routes' => [
-                        'api' => $this->buildControllersService->modelEntities . '/' . $this->buildControllersService->modelEntities . '.json',
-                        'admin' => $this->buildControllersService->modelEntities . '/' . $this->buildControllersService->modelEntities . '.json',
-                    ],
-                ],
-            ]);
+//            $this->createCrudRecordService->update([
+//                'name' => Str::title($this->buildControllersService->modelEntities),
+//                'controllers' => [
+//                    'api' => $this->buildControllersService->controllerName,
+//                    'admin' => $this->buildControllersService->controllerName,
+//                ],
+//                'menu' => [
+//                    'label' => Str::studly($this->buildControllersService->modelEntities),
+//                    'route' => 'adminr.' . $this->buildControllersService->modelEntities . '.index'
+//                ],
+//                'table' => $this->buildControllersService->tableName,
+//                'payload' => [
+//                    'model' => $this->buildControllersService->modelName . '.php',
+//                    'views' => [
+//                        'index' => 'admin/' . $this->buildControllersService->modelEntities . '/index.blade.php',
+//                        'create' => 'admin/' . $this->buildControllersService->modelEntities . '/create.blade.php',
+//                        'edit' => 'admin/' . $this->buildControllersService->modelEntities . '/edit.blade.php',
+//                    ],
+//                    'migration' => config('liquid.api.version'),
+//                    'controllers' => [
+//                        'api' => $this->buildControllersService->controllerName . '.php',
+//                        'admin' => $this->buildControllersService->controllerName . '.php',
+//                    ],
+//                    'routes' => [
+//                        'api' => $this->buildControllersService->modelEntities . '/' . $this->buildControllersService->modelEntities . '.json',
+//                        'admin' => $this->buildControllersService->modelEntities . '/' . $this->buildControllersService->modelEntities . '.json',
+//                    ],
+//                ],
+//            ]);
 
             $this->buildModelService
                 ->prepare($request)
@@ -110,33 +105,33 @@ class BuilderController extends Controller
                 ->prepare($request)
                 ->buildMigration()
                 ->cleanUp();
-
-            $this->createCrudRecordService->update([
-                'migration' => $this->buildMigrationService->migrationFileName,
-                'payload->migration' => $this->buildMigrationService->migrationFileName . '.php'
-            ]);
-
+//
+//            $this->createCrudRecordService->update([
+//                'migration' => $this->buildMigrationService->migrationFileName,
+//                'payload->migration' => $this->buildMigrationService->migrationFileName . '.php'
+//            ]);
+//
             $this->buildRouteService
                 ->prepare($request)
                 ->buildApiRoute()
                 ->buildAdminRoute()
                 ->cleanUp();
 
-            $this->buildViewsService
-                ->prepare($request)
-                ->buildIndexView()
-                ->buildCreateView()
-                ->buildEditView()
-                ->cleanUp();
-
-            Artisan::call('migrate');
+//            $this->buildViewsService
+//                ->prepare($request)
+//                ->buildIndexView()
+//                ->buildCreateView()
+//                ->buildEditView()
+//                ->cleanUp();
+//
+//            Artisan::call('migrate');
 
             return response()->json(['status' => 'success', 'message' => 'CRUD generated Successfully!'], 200);
         } catch (\Exception $e){
-            $this->rollbackAll();
+//            $this->rollbackAll();
             return response()->json(['status' => 'error', 'message' => 'Error: ' . $e->getMessage()], 200);
         } catch (\Error $e){
-            $this->rollbackAll();
+//            $this->rollbackAll();
             return response()->json(['status' => 'error', 'message' => 'Error: ' . $e->getMessage()], 200);
         }
     }

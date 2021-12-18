@@ -2,6 +2,7 @@
 
 namespace Devsbuddy\AdminrCore\Traits;
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
@@ -18,11 +19,12 @@ trait CanManageFiles
      * Uploads the file in storage
      * and also create a record in media table
      *
-     * @param mixed $file
-     * @param mixed $dir
+     * @param UploadedFile $file
+     * @param string|null $dir
+     * @param string|null $fileNamePrefix
      * @return $this
      */
-    public function uploadFile($file, $dir = null)
+    public function uploadFile($file, $dir = null, $fileNamePrefix = null)
     {
         $this->file = $file;
         $this->dir = $dir;
@@ -31,7 +33,7 @@ trait CanManageFiles
         $fileExtension = $this->file->getClientOriginalExtension();
         $uploadsHome = "uploads/";
 
-        $this->saveFileName = $fileName . "." . strtolower($fileExtension);
+        $this->saveFileName = $fileNamePrefix . $fileName . "." . strtolower($fileExtension);
         $this->dir = $this->dir ? $uploadsHome . $this->dir . "/" : $uploadsHome . "/";
         $this->destination = storage_path() . '/app/public/' . $this->dir;
         $this->uploadedFileName = 'storage/' . $this->dir . $this->saveFileName;
@@ -47,10 +49,11 @@ trait CanManageFiles
      * and also create a record in media table
      *
      * @param array $files
-     * @param mixed $dir
+     * @param string|null $dir
+     * @param string|null $fileNamePrefix
      * @return $this
      */
-    public function uploadFiles($files, $dir = null)
+    public function uploadFiles($files, $dir = null, $fileNamePrefix = null)
     {
         $this->dir = $dir;
 
@@ -59,7 +62,7 @@ trait CanManageFiles
             $fileExtension = $file->getClientOriginalExtension();
             $uploadsHome = "uploads/";
 
-            $this->saveFileName = $fileName . "." . strtolower($fileExtension);
+            $this->saveFileName = $fileNamePrefix . $fileName . "." . strtolower($fileExtension);
             $this->dir = $this->dir ? $uploadsHome . $this->dir . "/" : $uploadsHome . "/";
             $this->destination = storage_path() . '/app/public/' . $this->dir;
             $this->uploadedFileNames[] = 'storage/' . $this->dir . $this->saveFileName;
@@ -75,9 +78,9 @@ trait CanManageFiles
      * Returns the uploaded
      * media file name
      *
-     * @return string
+     * @return string|null
      */
-    public function getFileName() : string
+    public function getFileName(): ?string
     {
         return $this->uploadedFileName;
     }
@@ -87,9 +90,9 @@ trait CanManageFiles
      * Returns the uploaded
      * media files name
      *
-     * @return array
+     * @return array|null
      */
-    public function getFileNames() : array
+    public function getFileNames(): ?array
     {
         return $this->uploadedFileNames;
     }
@@ -127,6 +130,24 @@ trait CanManageFiles
         }
         return $this;
     }
+
+
+    /**
+     * Delete file from the storage path
+     *
+     * @param array $files
+     * @return $this
+     */
+    public function deleteStorageFiles($files)
+    {
+        if (!is_null($files)) {
+            foreach ($files as $file) {
+                $this->deleteStorageFile($file);
+            }
+        }
+        return $this;
+    }
+
 
     /**
      * Delete any directory from the given path
