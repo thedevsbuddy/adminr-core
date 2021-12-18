@@ -1,4 +1,5 @@
 window.axios = require('axios');
+window._ = require('lodash');
 
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -7,7 +8,8 @@ var token = document.head.querySelector('meta[name="csrf-token"]');
 axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-import { createApp } from 'vue'
+import {createApp} from 'vue'
+
 const app = createApp({});
 
 
@@ -23,21 +25,6 @@ const files = require.context('./', true, /\.vue$/i);
 files.keys().map(key => app.component(key.split('/').pop().split('.')[0], files(key).default));
 
 app.mount('#app');
-
-$(document).on('change', '#image', function (e) {
-    readURL(this);
-});
-
-function readURL(input) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            $('.custom-file-button').css('background-image', 'url("'+e.target.result+'")');
-        }
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
 
 $(document).on('click', '.delete-item', function (e) {
     e.preventDefault();
@@ -57,8 +44,8 @@ $(document).on('click', '.delete-item', function (e) {
         confirmButtonText: confirm ?? 'Yes, delete it!'
     }).then((result) => {
         if (result.isConfirmed) {
-            if(url == '#' || url == 'javascript:void(0)' || url == 'javascript') {
-                $('#'+deleteForm).submit();
+            if (url == '#' || url == 'javascript:void(0)' || url == 'javascript') {
+                $('#' + deleteForm).submit();
             } else {
                 window.location.href = url;
             }
@@ -78,17 +65,17 @@ function readFile(input, target) {
             $(target).css('background-position', 'center')
                 .css('background-repeat', 'no-repeat')
                 .css('background-size', 'cover')
-                .css('background-image', 'url("'+e.target.result+'")');
+                .css('background-image', 'url("' + e.target.result + '")');
 
             $('#' + input.getAttribute('id')).parent().find('.file-input-icon').fadeOut(200);
-        }
+        };
         reader.readAsDataURL(input.files[0]);
     }
 }
 
 
 function toggleSidebar(action) {
-    if(action === 'minimize') {
+    if (action === 'minimize') {
         $('#sidebar').addClass('c-sidebar-minimized');
     } else {
         $('#sidebar').removeClass('c-sidebar-minimized');
@@ -101,9 +88,16 @@ $(window).resize(function () {
 checkWindow();
 
 function checkWindow() {
-    if(window.innerWidth < 1200){
+    if (window.innerWidth < 1200) {
         toggleSidebar('minimize');
     } else {
         toggleSidebar('maximize');
     }
 }
+
+
+$(window).on('resize', function () {
+    $('.select2').each(function () {
+        $(this).select2();
+    });
+});

@@ -1,4 +1,4 @@
-@extends('liquid-lite::layouts.master')
+@extends('adminr.layouts.master')
 
 @section('title', __('Manage Resources'))
 
@@ -11,7 +11,7 @@
     <div class="d-sm-flex justify-content-between align-items-center mb-3">
         <h3 class="text-dark mb-0">{{ __('Manage Resources') }}</h3>
         <div>
-            <a href="{{ route('adminr.builder') }}" class="btn btn-primary btn-sm d-none d-sm-inline-block">
+            <a href="{{ route(config('app.route_prefix').'.builder') }}" class="btn btn-primary btn-sm d-none d-sm-inline-block">
                 <svg class="c-icon mr-1">
                     <use xlink:href="{{ coreUiIcon('cil-library-add') }}"></use>
                 </svg>
@@ -38,19 +38,19 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @forelse($cruds as $index => $crud)
+                        @forelse($resources as $index => $resource)
                             <tr>
                                 <td class="text-center">{{++$index}}</td>
-                                <td>{{ $crud->name }}</td>
-                                <td>{{ $crud->model }}</td>
-                                <td>{{ $crud->controllers->admin }} (With API controller) </td>
+                                <td>{{ $resource->name }}</td>
+                                <td>{{ $resource->model }}</td>
+                                <td>{{ $resource->controllers->admin }} (With API controller) </td>
                                 <td>
-                                    @if($crud->created_at->isToday())
-                                        {{ $crud->created_at->diffForHumans() }}
-                                    @elseif($crud->created_at->isYesterday())
-                                        Yesterday at {{ $crud->created_at->format('h:i A') }}
+                                    @if($resource->created_at->isToday())
+                                        {{ $resource->created_at->diffForHumans() }}
+                                    @elseif($resource->created_at->isYesterday())
+                                        Yesterday at {{ $resource->created_at->format('h:i A') }}
                                     @else
-                                        {{ $crud->created_at->format('jS M, Y') }}
+                                        {{ $resource->created_at->format('jS M, Y') }}
                                     @endif
                                 </td>
                                 <td>
@@ -59,17 +59,17 @@
 {{--                                            <use xlink:href="{{ coreUiIcon('cil-pen') }}"></use>--}}
 {{--                                        </svg>--}}
 {{--                                    </a>--}}
-                                    <a href="{{ route('adminr.cruds.configure', encrypt($crud->id)) }}" class="btn btn-sm btn-icon btn-primary" title="Configure Permissions">
+                                    <a href="{{ route('adminr.cruds.configure', encrypt($resource->id)) }}" class="btn btn-sm btn-icon btn-primary" title="Configure Permissions">
                                         <svg class="h-3 w-3">
                                             <use xlink:href="{{ coreUiIcon('cil-cog') }}"></use>
                                         </svg>
                                     </a>
-                                    <a href="#" data-form="crud_{{ $crud->id }}" class="btn btn-sm btn-icon btn-danger delete-item" title="Delete">
+                                    <a href="#" data-form="crud_{{ $resource->id }}" class="btn btn-sm btn-icon btn-danger delete-item" title="Delete">
                                         <svg class="h-3 w-3">
                                             <use xlink:href="{{ coreUiIcon('cil-trash') }}"></use>
                                         </svg>
                                     </a>
-                                    <form class="d-none" id="crud_{{ $crud->id }}" action="{{ route('adminr.cruds.destroy', $crud->id) }}" method="POST">
+                                    <form class="d-none" id="crud_{{ $resource->id }}" action="{{ route('adminr.cruds.destroy', $resource->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                     </form>
@@ -80,7 +80,7 @@
                         @endforelse
                         </tbody>
                         <tfoot>
-                        {!! $cruds->appends($_GET)->links() !!}
+                        {!! $resources->appends($_GET)->links() !!}
                         </tfoot>
                     </table>
                 </div>

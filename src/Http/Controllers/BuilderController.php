@@ -41,22 +41,14 @@ class BuilderController extends Controller
 
     public function index()
     {
-        try{
-            return view('liquid-lite::index');
+        try {
+            $dataTypes = collect(Database::dataTypes())->sort()->toArray();
+            return view('adminr-core::builder.create', compact('dataTypes'));
         } catch (\Exception $e){
             return back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
 
-    public function create()
-    {
-        try {
-            $dataTypes = Database::dataTypes();
-            return view('liquid-lite::builder.create', compact('dataTypes'));
-        } catch (\Exception $e){
-            return back()->with('error', 'Error: ' . $e->getMessage());
-        }
-    }
 
 
     public function build(Request $request)

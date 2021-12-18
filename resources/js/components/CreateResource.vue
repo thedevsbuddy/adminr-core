@@ -5,7 +5,8 @@
                 <div class="col-lg-3">
                     <div class="form-group">
                         <label for="model_name">Model name</label>
-                        <input type="text" id="model_name" @input="validateModelName" v-model="model" class="form-control" :class="{'is-invalid': errors.model === true}"
+                        <input type="text" id="model_name" @input="validateModelName" v-model="model"
+                               class="form-control" :class="{'is-invalid': errors.model === true}"
                                placeholder="E.g: Article">
                     </div>
                 </div>
@@ -21,37 +22,38 @@
                 </div>
                 <div class="col-lg-2">
                     <div class="form-group text-center">
-                        <label>Has Media (Image)</label>
+                        <label>Generate APIs</label>
                         <div class="custom-control text-center custom-switch">
-                            <input type="checkbox" class="custom-control-input" v-model="has_media" id="resource_has_media">
+                            <input type="checkbox" class="custom-control-input" v-model="generate_api"
+                                   id="resource_has_media">
                             <label class="custom-control-label" for="resource_has_media"></label>
                         </div>
 
                     </div>
                 </div>
-                <div class="col-lg-4">
-                    <div v-if="has_media">
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-group mb-0">
-                                    <label>Media field name</label>
-                                    <input type="text" class="form-control" @input="validateMediaFieldName" v-model="mediaField" placeholder="Media field">
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-group mb-0 text-center">
-                                    <label>Media type (Image)</label>
-                                    <select v-model="media_type" class="form-control" :disabled="!has_media">
-                                        <option value="" readonly selected>--Select Image Type--</option>
-                                        <option value="image">Single Image</option>
-<!--                                        <option value="multiple_image">Multiple Images</option>-->
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                <!--                <div class="col-lg-4">-->
+                <!--                    <div v-if="has_media">-->
+                <!--                        <div class="row">-->
+                <!--                            <div class="col-6">-->
+                <!--                                <div class="form-group mb-0">-->
+                <!--                                    <label>Media field name</label>-->
+                <!--                                    <input type="text" class="form-control" @input="validateMediaFieldName" v-model="mediaField" placeholder="Media field">-->
+                <!--                                </div>-->
+                <!--                            </div>-->
+                <!--                            <div class="col-6">-->
+                <!--                                <div class="form-group mb-0 text-center">-->
+                <!--                                    <label>Media type (Image)</label>-->
+                <!--                                    <select v-model="media_type" class="form-control" :disabled="!has_media">-->
+                <!--                                        <option value="" readonly selected>&#45;&#45;Select Image Type&#45;&#45;</option>-->
+                <!--                                        <option value="image">Single Image</option>-->
+                <!--&lt;!&ndash;                                        <option value="multiple_image">Multiple Images</option>&ndash;&gt;-->
+                <!--                                    </select>-->
+                <!--                                </div>-->
+                <!--                            </div>-->
+                <!--                        </div>-->
 
-                    </div>
-                </div>
+                <!--                    </div>-->
+                <!--                </div>-->
             </div>
             <hr>
             <table class="table table-bordered w-100">
@@ -67,7 +69,9 @@
                 <tbody>
                 <tr v-for="(migration, index) in migrations" :key="index">
                     <td>
-                        <input type="text" @input="migration.field_name = migration.field_name.split(pattern2).map((t) => t ? t[0].toLowerCase() + t.slice(1).toLowerCase() : '').join('_').trim()" v-model="migration.field_name" class="form-control">
+                        <input type="text"
+                               @input="migration.field_name = migration.field_name.split(pattern2).map((t) => t ? t[0].toLowerCase() + t.slice(1).toLowerCase() : '').join('_').trim()"
+                               v-model="migration.field_name" class="form-control">
                     </td>
                     <td>
                         <select v-model="migration.data_type" class="form-control mb-3">
@@ -76,16 +80,33 @@
                             </option>
                         </select>
 
-                        <div class="form-group" v-if="migration.data_type == 'slug'">
+                        <div class="form-group" v-if="migration.data_type === 'slug'">
                             <label>Select field</label>
                             <small class="text-danger d-block mb-3">Generate slug / Unique Identifier from.</small>
                             <select v-model="migration.slug_from" class="form-control">
-                                <option v-for="m in migrations.filter(mig => mig.field_name != migration.field_name)" :value="m.field_name">{{ m.field_name }}</option>
+                                <option v-for="m in migrations.filter(mig => mig.field_name != migration.field_name)"
+                                        :value="m.field_name">{{ m.field_name }}
+                                </option>
                             </select>
-
                         </div>
 
-                        <div class="form-group" v-if="migration.data_type == 'text' || migration.data_type == 'longText' || migration.data_type == 'mediumText'">
+                        <div class="form-group" v-if="migration.data_type === 'file'">
+                            <label>File Type</label>
+                            <select v-model="migration.file_type"
+                                    class="form-control" :id="'file_type_' + index">
+                                <option value="single">Single File</option>
+                                <option value="multiple">Multiple Files</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" v-if="migration.data_type === 'file'">
+                            <label>Accepted file Types</label>
+                            <input type="text" v-model="migration.accept" placeholder="E.g .png, .jpg, .svg"
+                                   class="form-control" :id="'accept_' + index">
+                        </div>
+
+                        <div class="form-group"
+                             v-if="migration.data_type === 'text' || migration.data_type === 'longText'">
                             <label>Rich text editor</label>
                             <div class="custom-control custom-switch">
                                 <input type="checkbox" v-model="migration.is_rich_text"
@@ -190,23 +211,28 @@
                             <tbody>
                             <td colspan="5">
                                 <div class="form-group mb-0 text-center position-relative">
-                                    <button type="button" @click.stop="migration.configuring = !migration.configuring" class="btn btn-sm btn-primary">
+                                    <button type="button" @click.stop="migration.configuring = !migration.configuring"
+                                            class="btn btn-sm btn-primary">
                                         <i class="fas fa-cog"></i> Configure
                                     </button>
                                     <transition name="fade">
-                                        <div class="configure-modal position-absolute bg-white shadow rounded text-left p-3" v-if="migration.configuring">
+                                        <div class="configure-modal position-absolute bg-white shadow rounded text-left p-3"
+                                             v-if="migration.configuring">
                                             <h5 class="mb-4">Configure form view for admin panel.</h5>
                                             <div class="form-group mb-3">
                                                 <label class="text-dark">Col LG ({{ migration.col_lg }})</label>
-                                                <input class="form-control-range bg-primary" type="range" min="1" max="12" step="1" v-model="migration.col_lg" />
+                                                <input class="form-control-range bg-primary" type="range" min="1"
+                                                       max="12" step="1" v-model="migration.col_lg"/>
                                             </div>
                                             <div class="form-group mb-3">
                                                 <label class="text-dark">Col MD ({{ migration.col_md }})</label>
-                                                <input class="form-control-range bg-primary" type="range" min="1" max="12" step="1" v-model="migration.col_md" />
+                                                <input class="form-control-range bg-primary" type="range" min="1"
+                                                       max="12" step="1" v-model="migration.col_md"/>
                                             </div>
                                             <div class="form-group mb-3">
                                                 <label class="text-dark">Col SM ({{ migration.col_sm }})</label>
-                                                <input class="form-control-range bg-primary" type="range" min="1" max="12" step="1" v-model="migration.col_sm" />
+                                                <input class="form-control-range bg-primary" type="range" min="1"
+                                                       max="12" step="1" v-model="migration.col_sm"/>
                                             </div>
                                         </div>
                                     </transition>
@@ -224,13 +250,15 @@
                     <td>
                         <div class="d-flex">
                             <div class="btn-group mr-2" role="group" aria-label="Order the fields">
-                            <button class="btn btn-sm btn-icon btn-primary" @click.prevent="addInput(index)"><i
-                                    class="fas fa-plus"></i></button>
+                                <button class="btn btn-sm btn-icon btn-primary" @click.prevent="addInput(index)"><i
+                                        class="fas fa-plus"></i></button>
 
-                                <button class="btn btn-sm btn-icon btn-secondary" @click.prevent="updateOrderUp(index)" :disabled="index == 0" type="button">
+                                <button class="btn btn-sm btn-icon btn-secondary" @click.prevent="updateOrderUp(index)"
+                                        :disabled="index == 0" type="button">
                                     <i class="fas fa-arrow-up"></i>
                                 </button>
-                                <button class="btn btn-sm btn-icon btn-secondary" @click.prevent="updateOrderDn(index)" :disabled="index == migrations.length - 1" type="button">
+                                <button class="btn btn-sm btn-icon btn-secondary" @click.prevent="updateOrderDn(index)"
+                                        :disabled="index == migrations.length - 1" type="button">
                                     <i class="fas fa-arrow-down"></i>
                                 </button>
 
@@ -255,7 +283,7 @@
 
 <script>
     export default {
-        name: "CreateResource",
+        name: "create-resource",
         props: [
             "datatypes",
         ],
@@ -266,14 +294,14 @@
                 isGenerating: false,
                 model: '',
                 softdeletes: false,
+                generate_api: false,
                 dataTypes: this.datatypes,
-                has_media: false,
-                media_type: 'image',
-                mediaField: 'media',
                 migrations: [
                     {
                         data_type: 'string',
                         field_name: '',
+                        file_type: 'single',
+                        accept: null,
                         nullable: false,
                         show_index: true,
                         show_form: true,
@@ -300,6 +328,8 @@
                 this.migrations.splice(index + 1, 0, {
                     data_type: 'string',
                     field_name: '',
+                    file_type: 'single',
+                    accept: null,
                     nullable: false,
                     show_index: true,
                     show_form: true,
@@ -322,7 +352,7 @@
             },
             // Generate CRUD method
             generateCrud() {
-                if(this.model == null || this.model === ''){
+                if (this.model == null || this.model === '') {
                     toastr.error("Please type model name to continue!");
                     this.errors.model = true;
                     return;
@@ -332,16 +362,15 @@
                 let postData = {
                     migrations: this.migrations,
                     model: this.model,
-                    has_media: this.has_media,
                     media_type: this.media_type,
                     softdeletes: this.softdeletes,
                     media_field: this.mediaField,
                 };
 
-                axios.post(BASE_URL + "/adminr/generate",  postData)
+                axios.post(BASE_URL + "/adminr/generate", postData)
                     .then(response => {
                         this.isGenerating = false;
-                        if (response.data.status === 'success'){
+                        if (response.data.status === 'success') {
                             toastr.success(response.data.message);
                         } else {
                             toastr.error(response.data.message);
@@ -353,22 +382,22 @@
                     });
             },
 
-            updateOrderUp(index){
+            updateOrderUp(index) {
                 let migration = this.migrations[index];
                 this.migrations.splice(index, 1)
                 this.migrations.splice(index - 1, 0, migration);
             },
-            updateOrderDn(index){
+            updateOrderDn(index) {
                 let migration = this.migrations[index];
                 this.migrations.splice(index, 1)
                 this.migrations.splice(index + 1, 0, migration);
             },
 
-            validateModelName(e){
+            validateModelName(e) {
                 return this.model = e.target.value.split(this.pattern).map((t) => t ? t[0].toUpperCase() + t.slice(1) : '').join('').trim();
             },
 
-            validateMediaFieldName(e){
+            validateMediaFieldName(e) {
                 return this.mediaField = e.target.value.split(this.pattern).map((t) => t ? t[0].toLowerCase() + t.slice(1).toLowerCase() : '').join('_').trim();
             }
         }
@@ -412,10 +441,13 @@
             transform: scale(1.3);
         }
     }
+
     .fade-enter-active, .fade-leave-active {
         transition: opacity .5s;
     }
-    .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+
+    .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */
+    {
         opacity: 0;
     }
 </style>

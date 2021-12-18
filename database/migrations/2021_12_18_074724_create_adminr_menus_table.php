@@ -19,8 +19,10 @@ class CreateAdminrMenusTable extends Migration
             $table->unsignedBigInteger('parent')->nullable();
             $table->string('label');
             $table->string('route');
-            $table->enum('icon_type', ['icon', 'svg', 'image'])->default('icon');
+            $table->boolean('active')->default(true)->comment('true | false');
+            $table->enum('icon_type', ['icon', 'svg', 'image'])->nullable()->comment('icon | svg | image');
             $table->text('icon')->nullable();
+            $table->string('resource')->nullable();
             $table->timestamps();
         });
     }

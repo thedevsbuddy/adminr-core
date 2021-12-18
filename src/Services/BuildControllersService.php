@@ -223,7 +223,7 @@ class BuildControllersService extends LiquidBaseService
         $fileUploadStmt = "";
         if ($this->hasMedia == true) {
             $fileUploadStmt .= "if(\$request->hasFile(\"".$this->mediaField."\")){\n\t\t\t\t";
-            $fileUploadStmt .= "\$fileName = \$this->uploadFile(\$request->file(\"".$this->mediaField."\"), \"".$this->modelEntities."\")->getUploadedFileName();\n\t\t\t";
+            $fileUploadStmt .= "\$fileName = \$this->uploadFile(\$request->file(\"".$this->mediaField."\"), \"".$this->modelEntities."\")->getFileName();\n\t\t\t";
             $fileUploadStmt .= "} else {\n\t\t\t\t";
             $fileUploadStmt .= "return back()->with(\"error\", \"Please select an image for media\");\n\t\t\t";
             $fileUploadStmt .= "}\n";
@@ -241,7 +241,7 @@ class BuildControllersService extends LiquidBaseService
 
         if ($this->hasMedia == true) {
             $fileUploadStmt .= "if(\$request->hasFile(\"".$this->mediaField."\")){\n\t\t\t\t";
-            $fileUploadStmt .= "\$fileName = \$this->uploadFile(\$request->file(\"".$this->mediaField."\"), \"".$this->modelEntities."\")->getUploadedFileName();\n\t\t\t";
+            $fileUploadStmt .= "\$fileName = \$this->uploadFile(\$request->file(\"".$this->mediaField."\"), \"".$this->modelEntities."\")->getFileName();\n\t\t\t";
             $fileUploadStmt .= "} else {\n\t\t\t\t";
             $fileUploadStmt .= "return \$this->error(\"Please select an image for media\");\n\t\t\t";
             $fileUploadStmt .= "}\n";
@@ -260,7 +260,7 @@ class BuildControllersService extends LiquidBaseService
         $fileUploadStmt = "";
         if ($this->hasMedia == true) {
             $fileUploadStmt .= "if(\$request->hasFile(\"".$this->mediaField."\")){\n\t\t\t\t";
-            $fileUploadStmt .= "\$fileName = \$this->uploadFile(\$request->file(\"".$this->mediaField."\"), \"".$this->modelEntities."\")->getUploadedFileName();\n\t\t\t\t";
+            $fileUploadStmt .= "\$fileName = \$this->uploadFile(\$request->file(\"".$this->mediaField."\"), \"".$this->modelEntities."\")->getFileName();\n\t\t\t\t";
             $fileUploadStmt .= "\$this->deleteFileFromStorage($".$this->modelEntity."->".$this->mediaField.");\n\t\t\t";
             $fileUploadStmt .= "} else {\n\t\t\t\t";
             $fileUploadStmt .= "\$fileName = \$".$this->modelEntity."->".$this->mediaField.";\n\t\t\t";

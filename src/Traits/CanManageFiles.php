@@ -5,7 +5,8 @@ namespace Devsbuddy\AdminrCore\Traits;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-trait CanManageFiles {
+trait CanManageFiles
+{
     public $file;
     public $dir;
     public $saveFileName;
@@ -21,7 +22,8 @@ trait CanManageFiles {
      * @param mixed $dir
      * @return $this
      */
-    public function uploadFile($file, $dir = null) {
+    public function uploadFile($file, $dir = null)
+    {
         $this->file = $file;
         $this->dir = $dir;
 
@@ -29,8 +31,8 @@ trait CanManageFiles {
         $fileExtension = $this->file->getClientOriginalExtension();
         $uploadsHome = "uploads/";
 
-        $this->saveFileName = $fileName. "." . strtolower($fileExtension);
-        $this->dir = $this->dir ? $uploadsHome.$this->dir."/" : $uploadsHome."/";
+        $this->saveFileName = $fileName . "." . strtolower($fileExtension);
+        $this->dir = $this->dir ? $uploadsHome . $this->dir . "/" : $uploadsHome . "/";
         $this->destination = storage_path() . '/app/public/' . $this->dir;
         $this->uploadedFileName = 'storage/' . $this->dir . $this->saveFileName;
 
@@ -48,18 +50,19 @@ trait CanManageFiles {
      * @param mixed $dir
      * @return $this
      */
-    public function uploadMultipleFile($files, $dir = null) {
+    public function uploadFiles($files, $dir = null)
+    {
         $this->dir = $dir;
 
-        foreach ($files as $file){
+        foreach ($files as $file) {
             $fileName = Str::random(64);
             $fileExtension = $file->getClientOriginalExtension();
             $uploadsHome = "uploads/";
 
-            $this->saveFileName = $fileName. "." . strtolower($fileExtension);
-            $this->dir = $this->dir ? $uploadsHome.$this->dir."/" : $uploadsHome."/";
+            $this->saveFileName = $fileName . "." . strtolower($fileExtension);
+            $this->dir = $this->dir ? $uploadsHome . $this->dir . "/" : $uploadsHome . "/";
             $this->destination = storage_path() . '/app/public/' . $this->dir;
-            $this->uploadedFileName[] = 'storage/' . $this->dir . $this->saveFileName;
+            $this->uploadedFileNames[] = 'storage/' . $this->dir . $this->saveFileName;
 
             $file->move($this->destination, $this->saveFileName);
         }
@@ -74,7 +77,8 @@ trait CanManageFiles {
      *
      * @return string
      */
-    public function getUploadedFileName() {
+    public function getFileName() : string
+    {
         return $this->uploadedFileName;
     }
 
@@ -85,10 +89,10 @@ trait CanManageFiles {
      *
      * @return array
      */
-    public function getUploadedFileNames() {
+    public function getFileNames() : array
+    {
         return $this->uploadedFileNames;
     }
-
 
 
     /**
@@ -97,8 +101,9 @@ trait CanManageFiles {
      * @param mixed $path
      * @return $this
      */
-    public function deleteFile($path) {
-        if (File::exists($path)){
+    public function deleteFile($path)
+    {
+        if (File::exists($path)) {
             File::delete($path);
         }
         return $this;
@@ -111,11 +116,14 @@ trait CanManageFiles {
      * @param mixed $path
      * @return $this
      */
-    public function deleteFileFromStorage($path) {
-        if(explode('/', $path)[0] == 'storage'){
-            $this->deleteFile(storage_path() . '/app/public/' . Str::replace('storage/', '', $path));
-        } else {
-            $this->deleteFile(storage_path() . '/app/public/' . $path);
+    public function deleteStorageFile($path)
+    {
+        if (!is_null($path)) {
+            if (explode('/', $path)[0] == 'storage') {
+                $this->deleteFile(storage_path() . '/app/public/' . Str::replace('storage/', '', $path));
+            } else {
+                $this->deleteFile(storage_path() . '/app/public/' . $path);
+            }
         }
         return $this;
     }
@@ -126,8 +134,9 @@ trait CanManageFiles {
      * @param mixed $path
      * @return $this
      */
-    public function deleteDir($path) {
-        if (File::isDirectory($path)){
+    public function deleteDir($path)
+    {
+        if (File::isDirectory($path)) {
             File::deleteDirectory($path);
         }
         return $this;

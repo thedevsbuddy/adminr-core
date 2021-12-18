@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 
-class CrudController extends Controller
+class ResourceController extends Controller
 {
     use HasStubs, HasResponse;
 
@@ -25,9 +25,8 @@ class CrudController extends Controller
 
     public function index()
     {
-        $cruds = Resource::paginate(10);
-
-        return view('liquid-lite::cruds.index', compact('cruds'));
+        $resources = Resource::paginate(10);
+        return view('adminr-core::resources.index', compact('resources'));
     }
 
     public function store(Request $request)

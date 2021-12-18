@@ -13,59 +13,26 @@ class Database extends Model
     static public function dataTypes()
     {
         return [
-            'primary',
-            'unique',
             'slug',
             'increments',
-            'tinyIncrements',
-            'smallIncrements',
-            'mediumIncrements',
             'bigIncrements',
-            'char',
             'string',
+            'file',
             'text',
-            'mediumText',
             'longText',
             'integer',
             'tinyInteger',
-            'smallInteger',
-            'mediumInteger',
-            'bigInteger',
             'unsignedInteger',
             'unsignedTinyInteger',
-            'unsignedSmallInteger',
-            'unsignedMediumInteger',
             'unsignedBigInteger',
-            'float',
             'double',
-            'decimal',
-            'unsignedDecimal',
             'boolean',
             'enum',
             'json',
-            'jsonb',
             'date',
             'dateTime',
-            'dateTimeTz',
             'time',
-            'timeTz',
             'timestamp',
-            'timestampTz',
-            'binary',
-            'uuid',
-            'ipAddress',
-            'macAddress',
-            'geometry',
-            'point',
-            'lineString',
-            'polygon',
-            'geometryCollection',
-            'multiPoint',
-            'multiLineString',
-            'multiPolygon',
-            // 'morphs',
-            // 'nullableMorphs',
-            // 'rememberToken',
         ];
     }
 
@@ -74,16 +41,8 @@ class Database extends Model
         return [
             'date',
             'dateTime',
-            'dateTimeTz',
             'time',
-            'timeTz',
             'timestamp',
-            'timestampTz',
-            'timestamps',
-            'nullableTimestamps',
-            'timestampsTz',
-            'softDeletes',
-            'softDeletesTz'
         ];
     }
 
@@ -92,18 +51,11 @@ class Database extends Model
         return [
             'integer',
             'tinyInteger',
-            'smallInteger',
-            'mediumInteger',
             'bigInteger',
             'unsignedInteger',
             'unsignedTinyInteger',
-            'unsignedSmallInteger',
-            'unsignedMediumInteger',
             'unsignedBigInteger',
-            'float',
             'double',
-            'decimal',
-            'unsignedDecimal',
             'boolean',
         ];
     }
@@ -113,13 +65,9 @@ class Database extends Model
         return [
             'integer',
             'tinyInteger',
-            'smallInteger',
-            'mediumInteger',
             'bigInteger',
             'unsignedInteger',
             'unsignedTinyInteger',
-            'unsignedSmallInteger',
-            'unsignedMediumInteger',
             'unsignedBigInteger',
             'boolean',
         ];
@@ -129,9 +77,6 @@ class Database extends Model
     {
         return [
             'increments',
-            'tinyIncrements',
-            'smallIncrements',
-            'mediumIncrements',
             'bigIncrements',
         ];
     }
@@ -141,7 +86,6 @@ class Database extends Model
     {
         return [
             'text',
-            'mediumText',
             'longText'
         ];
     }

@@ -76,7 +76,7 @@ trait CanUpload {
      *
      * @return string
      */
-    public function getUploadedFileName() {
+    public function getFileName() {
         return $this->uploadedFileName;
     }
 
@@ -87,7 +87,7 @@ trait CanUpload {
      *
      * @return array
      */
-    public function getUploadedFileNames() {
+    public function getFileNames() {
         return $this->uploadedFileNames;
     }
 }

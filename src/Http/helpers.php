@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Setting;
 use Illuminate\Support\Facades\Route;
 
 
@@ -12,7 +11,7 @@ use Illuminate\Support\Facades\Route;
  */
 if(!function_exists('coreUiIcon')){
     function coreUiIcon($id){
-        return asset('vendor/liquid-lite/coreui/free.svg#'.$id);
+        return asset('vendor/adminr-core/coreui/free.svg#'.$id);
     }
 }
 
@@ -78,23 +77,6 @@ if (!function_exists('returnIfRoutes')) {
         } else {
             return $fallback;
         }
-    }
-}
-
-
-
-/**
- * Returns the setting value by the
- * option provided
- *
- * @param String $option
- */
-if (!function_exists('getSetting')) {
-    function getSetting($option)
-    {
-        return Setting::where('option', $option)->first()
-            ? Setting::where('option', $option)->first()->value
-            : null;
     }
 }
 

@@ -17,9 +17,8 @@ class AdminrCoreServiceProvider extends ServiceProvider
         /*
          * Optional methods to load your package assets
          */
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'adminr-core');
         $this->loadRoutesFrom(__DIR__ . '/Http/routes.php');
-
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'adminr-core');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         if ($this->app->runningInConsole()) {
@@ -28,9 +27,9 @@ class AdminrCoreServiceProvider extends ServiceProvider
             ], 'laravel-config');
 
             // Publishing the views.
-            $this->publishes([
-                __DIR__.'/../resources/views' => resource_path('views/vendor/adminr-core'),
-            ], 'laravel-views');
+//            $this->publishes([
+//                __DIR__.'/../resources/views' => resource_path('views/vendor/adminr-core'),
+//            ], 'laravel-views');
 
             // Publishing assets.
             $this->publishes([
