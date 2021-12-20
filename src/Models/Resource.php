@@ -18,4 +18,9 @@ class Resource extends Model
         'payload' => 'object',
         'table_structure' => 'object',
     ];
+
+    public function menu()
+    {
+        return $this->hasOne(Menu::class, 'resource');
+    }
 }

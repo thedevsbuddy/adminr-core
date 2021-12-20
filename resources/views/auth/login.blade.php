@@ -1,4 +1,4 @@
-@extends('liquid-lite::layouts.auth')
+@extends('adminr.layouts.auth')
 
 @section('content')
 

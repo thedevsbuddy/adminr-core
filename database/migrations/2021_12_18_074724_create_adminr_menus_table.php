@@ -22,8 +22,11 @@ class CreateAdminrMenusTable extends Migration
             $table->boolean('active')->default(true)->comment('true | false');
             $table->enum('icon_type', ['icon', 'svg', 'image'])->nullable()->comment('icon | svg | image');
             $table->text('icon')->nullable();
-            $table->string('resource')->nullable();
+            $table->unsignedBigInteger('resource')->nullable();
             $table->timestamps();
+
+            $table->foreign('resource')->references('id')->on('adminr_resources')->cascadeOnDelete();
+            $table->foreign('parent')->references('id')->on('adminr_menus')->cascadeOnDelete();
         });
     }
 

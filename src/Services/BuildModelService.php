@@ -116,8 +116,10 @@ class BuildModelService extends AdminrCoreService
      */
     public function rollback()
     {
-        if (!is_null($this->modelName)) {
-            $this->deleteFile($this->modelTargetPath);
+        if (isset($this->modelName) && !is_null($this->modelName)) {
+            if (isset($this->modelTargetPath) && !is_null($this->modelTargetPath)) {
+                $this->deleteFile($this->modelTargetPath);
+            }
         }
         return $this;
     }

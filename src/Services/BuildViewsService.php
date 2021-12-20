@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class BuildViewsService extends LiquidBaseService
+class BuildViewsService extends AdminrCoreService
 {
     protected $viewIndexTargetPath;
     protected $viewCreateTargetPath;
@@ -18,14 +18,14 @@ class BuildViewsService extends LiquidBaseService
      * Prepares the service to generate views
      *
      * @param Request $request
-     * @return $this|LiquidBaseService
+     * @return $this|AdminrCoreService
      */
     public function prepare(Request $request)
     {
         parent::prepare($request);
-        $this->viewIndexTargetPath = base_path() . "/resources/views/admin/$this->modelEntities/index.blade.php";
-        $this->viewCreateTargetPath = base_path() . "/resources/views/admin/$this->modelEntities/create.blade.php";
-        $this->viewEditTargetPath = base_path() . "/resources/views/admin/$this->modelEntities/edit.blade.php";
+        $this->viewIndexTargetPath = base_path() . "/resources/views/adminr/$this->modelEntities/index.blade.php";
+        $this->viewCreateTargetPath = base_path() . "/resources/views/adminr/$this->modelEntities/create.blade.php";
+        $this->viewEditTargetPath = base_path() . "/resources/views/adminr/$this->modelEntities/edit.blade.php";
         return $this;
     }
 
@@ -140,8 +140,10 @@ class BuildViewsService extends LiquidBaseService
 
         $formStmt = "<div class=\"row\">\n";
         foreach ($migrations as $migration) {
-            if ($migration['show_form']) {
-                $formStmt .= $this->getInputField($migration) . "\n";
+            if ($migration['data_type'] != 'file') {
+                if ($migration['show_form']) {
+                    $formStmt .= $this->getInputField($migration) . "\n";
+                }
             }
         }
         $formStmt .= "\t\t\t\t\t\t</div>\n";
@@ -160,8 +162,10 @@ class BuildViewsService extends LiquidBaseService
 
         $formStmt = "<div class=\"row\">\n";
         foreach ($migrations as $migration) {
-            if ($migration['show_form']) {
-                $formStmt .= $this->getEditInputField($migration) . "\n";
+            if ($migration['data_type'] != 'file') {
+                if ($migration['show_form']) {
+                    $formStmt .= $this->getEditInputField($migration) . "\n";
+                }
             }
         }
         $formStmt .= "\t\t\t\t\t\t</div>\n";
@@ -177,29 +181,13 @@ class BuildViewsService extends LiquidBaseService
      */
     private function getInputField($migration)
     {
-        $isNumeric = in_array($migration['data_type'], Database::numericTypes());
-        $isInteger = in_array($migration['data_type'], Database::integerTypes());
-        $isIncrement = in_array($migration['data_type'], Database::incrementTypes());
-        $isTime = in_array($migration['data_type'], Database::timeTypes());
         $isLongText = in_array($migration['data_type'], Database::longTextDataTypes());
-
-        if ($isNumeric) {
-            $numberInput = $this->getViewStub('number-input');
-            return $this->processInputStubs($numberInput, $migration);
-        } else if ($isInteger) {
-            $numberInput = $this->getViewStub('number-input');
-            return $this->processInputStubs($numberInput, $migration);
-        } else if ($isIncrement) {
-            // We will not have this type
-            // as it is primary key and auto generated
-        } else if ($isTime) {
-
-        } else if ($isLongText) {
-            $longTextInput = $this->getViewStub('text-input');
+        if ($isLongText) {
+            $longTextInput = $this->getViewStub('textarea-input');
             return $this->processInputStubs($longTextInput, $migration);
         } else {
-            $stringInput = $this->getViewStub('string-input');
-            return $this->processInputStubs($stringInput, $migration);
+            $inputFile = $this->getViewStub(Database::htmlDataType($migration['data_type']) . '-input');
+            return $this->processInputStubs($inputFile, $migration);
         }
     }
 
@@ -211,29 +199,13 @@ class BuildViewsService extends LiquidBaseService
      */
     private function getEditInputField($migration)
     {
-        $isNumeric = in_array($migration['data_type'], Database::numericTypes());
-        $isInteger = in_array($migration['data_type'], Database::integerTypes());
-        $isIncrement = in_array($migration['data_type'], Database::incrementTypes());
-        $isTime = in_array($migration['data_type'], Database::timeTypes());
         $isLongText = in_array($migration['data_type'], Database::longTextDataTypes());
-
-        if ($isNumeric) {
-            $numberInput = $this->getViewStub('number-edit-input');
-            return $this->processInputStubs($numberInput, $migration);
-        } else if ($isInteger) {
-            $numberInput = $this->getViewStub('number-edit-input');
-            return $this->processInputStubs($numberInput, $migration);
-        } else if ($isIncrement) {
-            // We will not have this type
-            // as it is primary key and auto generated
-        } else if ($isTime) {
-
-        } else if ($isLongText) {
-            $longTextInput = $this->getViewStub('text-edit-input');
+        if ($isLongText) {
+            $longTextInput = $this->getViewStub('textarea-edit-input');
             return $this->processInputStubs($longTextInput, $migration);
         } else {
-            $stringInput = $this->getViewStub('string-edit-input');
-            return $this->processInputStubs($stringInput, $migration);
+            $inputFile = $this->getViewStub(Database::htmlDataType($migration['data_type']) . '-edit-input');
+            return $this->processInputStubs($inputFile, $migration);
         }
     }
 
@@ -248,8 +220,12 @@ class BuildViewsService extends LiquidBaseService
     {
         $stub = str_replace('{{MODEL_ENTITY}}', $this->modelEntity, $stub);
         $stub = str_replace('{{FIELD_NAME}}', Str::snake($migration['field_name']), $stub);
+        $stub = str_replace('{{FIELD_NAME_LABEL}}', Str::title(Str::replace('_', ' ', $migration['field_name'])), $stub);
         $stub = str_replace('{{FIELD_NAME_LABEL}}', Str::studly($migration['field_name']), $stub);
-        $stub = str_replace('{{FIELD_NAME_LABEL}}', Str::studly($migration['field_name']), $stub);
+        $stub = str_replace('{{ACCEPT_FILE_STATEMENT}}', $migration['accept'] ?? '*/*', $stub);
+        $stub = str_replace('{{MULTIPLE_TYPE_STATEMENT}}', $migration['file_type'] == 'single' ? '' : 'multiple', $stub);
+        $stub = str_replace('{{OLD_FILE_STATEMENT}}', $this->getOldFileStatement(), $stub);
+        $stub = str_replace('{{REQUIRED_STATEMENT}}', $migration['nullable'] ? '' : 'required', $stub);
         $stub = str_replace('{{COL_SM}}', "col-sm-" . $migration['col_sm'], $stub);
         $stub = str_replace('{{COL_MD}}', "col-md-" . $migration['col_md'], $stub);
         $stub = str_replace('{{COL_LG}}', "col-lg-" . $migration['col_lg'], $stub);
@@ -285,6 +261,22 @@ class BuildViewsService extends LiquidBaseService
         return $ckeditorStmt;
     }
 
+
+    private function getOldFileStatement()
+    {
+        $oldFileStmt = "";
+        foreach ($this->request->get('migrations') as $migration){
+            if($migration['data_type'] == 'file'){
+                if($migration['file_type'] == 'single'){
+                    $oldFileStmt .= "{{ explode('/', $" . $this->modelEntity . "->" . Str::snake($migration['field_name']) . ")[count(explode('/', $" . $this->modelEntity . "->" . Str::snake($migration['field_name']) . ")) - 1] }}";
+                } else {
+                    $oldFileStmt .= "{{ count(json_decode($" . $this->modelEntity . "->" . Str::snake($migration['field_name']) . ")) }} files";
+                }
+            }
+        }
+        return $oldFileStmt;
+    }
+
     /**
      * Generates image upload statement
      *
@@ -292,21 +284,13 @@ class BuildViewsService extends LiquidBaseService
      */
     private function getImageUploadStatement()
     {
-        $imageUploadStmt = "";
-
-        if ($this->hasMedia) {
-            $imageUploadStmt .= "\n\t\t\t\t\t\t<label>" . Str::replace('_', ' ', Str::studly($this->mediaField)) . "</label>
-                        <label class=\"custom-file-button\">
-                            <div class=\"custom-file-content\">
-                                <span class=\"text-white\">
-                                    <i class=\"fa fa-upload mr-2\"></i>
-                                    <span>Select " . Str::replace('_', ' ', Str::studly($this->mediaField)) . "</span>
-                                </span>
-                                <input name=\"" . Str::snake($this->mediaField) . "\" id=\"image\" type=\"file\" accept=\"image/*\" />
-                            </div>
-                        </label>";
+        $migrations = $this->request->get('migrations');
+        $imageUploadStmt = "\n";
+        foreach ($migrations as $migration) {
+            if ($migration['data_type'] == 'file') {
+                $imageUploadStmt .= $this->getInputField($migration) . "\n";
+            }
         }
-
         return $imageUploadStmt;
     }
 
@@ -318,21 +302,13 @@ class BuildViewsService extends LiquidBaseService
      */
     private function getImageUpdateStatement()
     {
+        $migrations = $this->request->get('migrations');
         $imageUploadStmt = "";
-
-        if ($this->hasMedia) {
-            $imageUploadStmt .= "\n\t\t\t\t\t\t<label>" . Str::replace('_', ' ', Str::title($this->mediaField)) . "</label>
-                        <label class=\"custom-file-button\" style=\"background-image: url({{asset(\$" . Str::snake($this->modelName) . "->" . Str::snake($this->mediaField) . ")}})\">
-                            <div class=\"custom-file-content\">
-                                <span class=\"text-white\">
-                                    <i class=\"fa fa-upload mr-2\"></i>
-                                    <span>Select " . Str::replace('_', ' ', Str::title($this->mediaField)) . "</span>
-                                </span>
-                                <input name=\"" . Str::snake($this->mediaField) . "\" id=\"image\" type=\"file\" accept=\"image/*\" />
-                            </div>
-                        </label>";
+        foreach ($migrations as $migration) {
+            if ($migration['data_type'] == 'file') {
+                $imageUploadStmt .= $this->getEditInputField($migration) . "\n";
+            }
         }
-
         return $imageUploadStmt;
     }
 
@@ -365,7 +341,15 @@ class BuildViewsService extends LiquidBaseService
         $tableBodyStmt = "<td>{{++\$index}}</td>";
         foreach ($migrations as $migration) {
             if ($migration['show_index'] == true) {
-                $tableBodyStmt .= "\n\t\t\t\t\t\t\t\t\t<td>{{ $" . $this->modelEntity . "->" . Str::snake($migration['field_name']) . " }}</td>";
+                if ($migration['data_type'] == 'file') {
+                    if ($migration['file_type'] == 'single') {
+                        $tableBodyStmt .= "\n\t\t\t\t\t\t\t\t\t<td><img src='{{ asset($" . $this->modelEntity . "->" . Str::snake($migration['field_name']) . ") }}'  class=\"img-thumb\" alt='" . Str::title(Str::replace('_', ' ', $migration['field_name'])) . "' /></td>";
+                    } else {
+                        $tableBodyStmt .= "\n\t\t\t\t\t\t\t\t\t<td><img src='{{ asset(json_decode($" . $this->modelEntity . "->" . Str::snake($migration['field_name']) . ")[0]) }}'  class=\"img-thumb\" alt='" . Str::title(Str::replace('_', ' ', $migration['field_name'])) . "' /></td>";
+                    }
+                } else {
+                    $tableBodyStmt .= "\n\t\t\t\t\t\t\t\t\t<td>{{ $" . $this->modelEntity . "->" . Str::snake($migration['field_name']) . " }}</td>";
+                }
             }
         }
 
@@ -390,13 +374,13 @@ class BuildViewsService extends LiquidBaseService
      */
     protected function getTrashedButtonsStatement()
     {
-        $trashedButtonsStmt = "<a href=\"{{ route('adminr." . $this->modelEntities . ".index') }}\" class=\"btn btn-sm btn-primary m-0 mr-3\">
+        $trashedButtonsStmt = "<a href=\"{{ route(config('app.route_prefix').'." . $this->modelEntities . ".index') }}\" class=\"btn btn-sm btn-primary m-0 mr-3\">
                              <svg class=\"h-3 w-3\">
                                  <use xlink:href=\"{{ coreUiIcon('cil-apps') }}\"></use>
                              </svg>
                              View all
                         </a>
-                        <a href=\"{{ route('adminr." . $this->modelEntities . ".index') }}?trashed=true\" class=\"btn btn-sm btn-primary m-0 mr-3\">
+                        <a href=\"{{ route(config('app.route_prefix').'." . $this->modelEntities . ".index') }}?trashed=true\" class=\"btn btn-sm btn-primary m-0 mr-3\">
                              <svg class=\"h-3 w-3\">
                                  <use xlink:href=\"{{ coreUiIcon('cil-trash') }}\"></use>
                              </svg>
@@ -408,8 +392,8 @@ class BuildViewsService extends LiquidBaseService
 
     public function rollback()
     {
-        if (!is_null($this->modelEntities)) {
-            $this->deleteDir(base_path() . '/resources/views/admin/' . $this->modelEntities);
+        if (isset($this->modelEntities) && !is_null($this->modelEntities)) {
+            $this->deleteDir(base_path() . '/resources/views/adminr/' . $this->modelEntities);
         }
         return $this;
     }

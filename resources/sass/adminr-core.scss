@@ -1,10 +1,10 @@
+@import "./variables";
+
 .custom-file-button {
   position: relative;
   border: 1px dashed #aaa;
-  //background: #fff;
+  aspect-ratio: var(--aspect-ratio);
   width: 100%;
-  //min-height: 130px;
-  padding-top: 56.23%;
   border-radius: 10px;
   display: flex;
   justify-content: center;
@@ -14,20 +14,9 @@
   background-position: center;
   background-size: cover;
 }
+
 .custom-file-button input {
   display: none;
-}
-.custom-file-button .custom-file-content {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  border-radius: 10px;
-  top: 0;
-  left: 0;
-  background: rgba(0,0,0,0.35);
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .responsive{
@@ -103,17 +92,17 @@
   line-height: 14px;
 }
 
-.nav-pills .nav-link.active::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 0;
-  width: 0;
-  border-top: calc(11px + 16px) solid #fff;
-  border-left: 30px solid var(--primary);
-  border-bottom: calc(11px + 16px) solid #fff;
-}
+//.nav-pills .nav-link.active::after {
+//  content: '';
+//  position: absolute;
+//  top: 0;
+//  right: 0;
+//  height: 0;
+//  width: 0;
+//  border-top: calc(11px + 16px) solid #fff;
+//  border-left: 30px solid var(--primary);
+//  border-bottom: calc(11px + 16px) solid #fff;
+//}
 
 .circle-file-input {
   position: relative;
@@ -132,3 +121,17 @@
   cursor: pointer;
 }
 
+
+.img-thumb {
+  max-width: 75px;
+  display: block;
+  margin: 0 auto;
+  border-radius: 4px;
+  object-fit: cover;
+  aspect-ratio: 1;
+}
+
+.adminr-icon {
+  width: 20px;
+  height: 20px;
+}

@@ -29,7 +29,7 @@ class {{CONTROLLER_CLASS}} extends AdminrController
             {{TRASHED_FILTER}}
             ${{MODEL_ENTITIES}} = ${{MODEL_ENTITIES}}->paginate($this->resultLimit);
 
-            return view('admin.{{MODEL_ENTITIES}}.index', compact('{{MODEL_ENTITIES}}'));
+            return view('adminr.{{MODEL_ENTITIES}}.index', compact('{{MODEL_ENTITIES}}'));
         } catch(\Exception $e){
             return $this->backError('Error: ' . $e->getMessage());
         }
@@ -45,7 +45,7 @@ class {{CONTROLLER_CLASS}} extends AdminrController
     public function show({{MODEL_CLASS}} ${{MODEL_ENTITY}})
     {
         try{
-            return view('admin.{{MODEL_ENTITIES}}.show', compact('{{MODEL_ENTITY}}'));
+            return view('adminr.{{MODEL_ENTITIES}}.show', compact('{{MODEL_ENTITY}}'));
         } catch(\Exception $e){
             return $this->backError("Error: " . $e->getMessage());
         }
@@ -60,7 +60,7 @@ class {{CONTROLLER_CLASS}} extends AdminrController
     public function create()
     {
         try{
-            return view('admin.{{MODEL_ENTITIES}}.create');
+            return view('adminr.{{MODEL_ENTITIES}}.create');
         } catch(\Exception $e){
             return $this->backError("Error: " . $e->getMessage());
         }
@@ -82,7 +82,7 @@ class {{CONTROLLER_CLASS}} extends AdminrController
                 {{SAVE_DATA_STATEMENT}}
             ]);
 
-            return $this->redirectSuccess(route('adminr.{{MODEL_ENTITIES}}.index'), "{{MODEL_ENTITY}} saved successfully!");
+            return $this->redirectSuccess(route(config('app.route_prefix').'.{{MODEL_ENTITIES}}.index'), "{{MODEL_ENTITY}} saved successfully!");
         } catch(\Exception $e){
             return $this->backError("Error: " . $e->getMessage());
         }
@@ -97,7 +97,7 @@ class {{CONTROLLER_CLASS}} extends AdminrController
     public function edit({{MODEL_CLASS}} ${{MODEL_ENTITY}})
     {
         try{
-            return view('admin.{{MODEL_ENTITIES}}.edit', compact('{{MODEL_ENTITY}}'));
+            return view('adminr.{{MODEL_ENTITIES}}.edit', compact('{{MODEL_ENTITY}}'));
         } catch(\Exception $e){
             return $this->backError("Error: " . $e->getMessage());
         }
@@ -120,7 +120,7 @@ class {{CONTROLLER_CLASS}} extends AdminrController
                 {{UPDATE_DATA_STATEMENT}}
             ]);
 
-            return $this->redirectSuccess(route('adminr.{{MODEL_ENTITIES}}.index'), "{{MODEL_ENTITY}} updated successfully!");
+            return $this->redirectSuccess(route(config('app.route_prefix').'.{{MODEL_ENTITIES}}.index'), "{{MODEL_ENTITY}} updated successfully!");
         } catch(\Exception $e){
             return $this->backError("Error: " . $e->getMessage());
         }

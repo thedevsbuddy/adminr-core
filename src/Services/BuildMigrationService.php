@@ -98,7 +98,7 @@ class BuildMigrationService extends AdminrCoreService
                 if ($migration['data_type'] == 'slug') {
                     $data_type = "string";
                 } elseif ($migration['data_type'] == 'file') {
-                    if($migration['file_type'] == 'single'){
+                    if ($migration['file_type'] == 'single') {
                         $data_type = "string";
                     } else {
                         $data_type = "text";
@@ -148,8 +148,10 @@ class BuildMigrationService extends AdminrCoreService
      */
     public function rollback()
     {
-        if (!is_null($this->migrationFileName)) {
-            $this->deleteFile($this->migrationTargetPath);
+        if (isset($this->migrationFileName) && !is_null($this->migrationFileName)) {
+            if (isset($this->migrationTargetPath) && !is_null($this->migrationTargetPath)) {
+                $this->deleteFile($this->migrationTargetPath);
+            }
         }
         return $this;
     }

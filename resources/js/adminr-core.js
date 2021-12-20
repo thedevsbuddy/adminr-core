@@ -54,23 +54,55 @@ $(document).on('click', '.delete-item', function (e) {
 
 });
 
-$(document).on('change', '.file-input', function (e) {
-    readFile(this, $(this).data('target'));
+$(document).on('change', '.file-input', function () {
+    readFile(this);
 });
 
-function readFile(input, target) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            $(target).css('background-position', 'center')
-                .css('background-repeat', 'no-repeat')
-                .css('background-size', 'cover')
-                .css('background-image', 'url("' + e.target.result + '")');
+function readFile(input) {
+    let imageMimes = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'webp', 'svg'];
 
-            $('#' + input.getAttribute('id')).parent().find('.file-input-icon').fadeOut(200);
-        };
-        reader.readAsDataURL(input.files[0]);
+    let ext = $('#' + input.getAttribute('id')).val().split('.').pop().toLowerCase();
+
+    //
+    if (input.files.length === 1) {
+        if (!arrayContains(ext, imageMimes)) {
+            console.log($('#' + input.getAttribute('id')).val());
+            // Not an image
+            $('#' + input.getAttribute('id')).parent().find('.file-input-label').html(input.files[0].name.substring(0, 24)+'___.'+ext);
+        } else {
+            // Image
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                $('#' + input.getAttribute('id')).closest('.custom-file-button')
+                    .css('background-image', 'url("' + e.target.result + '")')
+                    .find('.custom-file-content span')
+                    .hide();
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    } else if (input.files.length > 1) {
+        $('#' + input.getAttribute('id')).closest('.custom-file-button')
+            .css('background-image', 'none')
+            .find('.custom-file-content span')
+            .show();
+        $('#' + input.getAttribute('id')).closest('.custom-file-button')
+            .find('.file-input-label')
+            .html(input.files.length + ' Files selected');
     }
+}
+
+function arrayContains(value, arr){
+    let result = false;
+
+    for(let i=0; i < arr.length; i++){
+        let name = arr[i];
+        if(name === value){
+            result = true;
+            break;
+        }
+    }
+
+    return result;
 }
 
 

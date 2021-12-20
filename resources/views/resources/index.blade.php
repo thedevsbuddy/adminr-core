@@ -32,7 +32,8 @@
                             <th class="text-center" style="width: 50px">#</th>
                             <th>{{ __('Name') }}</th>
                             <th>{{ __('Model') }}</th>
-                            <th>{{ __('Controllers') }}</th>
+                            <th>{{ __('API') }}</th>
+                            <th>{{ __('Menu') }}</th>
                             <th>{{ __('Generated') }}</th>
                             <th>{{ __('Actions') }}</th>
                         </tr>
@@ -43,7 +44,8 @@
                                 <td class="text-center">{{++$index}}</td>
                                 <td>{{ $resource->name }}</td>
                                 <td>{{ $resource->model }}</td>
-                                <td>{{ $resource->controllers->admin }} (With API controller) </td>
+                                <td>{{ $resource->payload->has_api ? 'Yes' : 'No' }}</td>
+                                <td>{{ $resource->menu->label }}</td>
                                 <td>
                                     @if($resource->created_at->isToday())
                                         {{ $resource->created_at->diffForHumans() }}
@@ -59,24 +61,24 @@
 {{--                                            <use xlink:href="{{ coreUiIcon('cil-pen') }}"></use>--}}
 {{--                                        </svg>--}}
 {{--                                    </a>--}}
-                                    <a href="{{ route('adminr.cruds.configure', encrypt($resource->id)) }}" class="btn btn-sm btn-icon btn-primary" title="Configure Permissions">
+                                    <a href="{{ route(config('app.route_prefix').'.resources.configure', encrypt($resource->id)) }}" class="btn btn-sm mr-2 btn-icon btn-primary" title="Configure Permissions">
                                         <svg class="h-3 w-3">
                                             <use xlink:href="{{ coreUiIcon('cil-cog') }}"></use>
                                         </svg>
                                     </a>
-                                    <a href="#" data-form="crud_{{ $resource->id }}" class="btn btn-sm btn-icon btn-danger delete-item" title="Delete">
+                                    <a href="#" data-form="resource_{{ $resource->id }}" class="btn btn-sm btn-icon btn-danger delete-item" title="Delete">
                                         <svg class="h-3 w-3">
                                             <use xlink:href="{{ coreUiIcon('cil-trash') }}"></use>
                                         </svg>
                                     </a>
-                                    <form class="d-none" id="crud_{{ $resource->id }}" action="{{ route('adminr.cruds.destroy', $resource->id) }}" method="POST">
+                                    <form class="d-none" id="resource_{{ $resource->id }}" action="{{ route(config('app.route_prefix').'.resources.destroy', $resource->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                     </form>
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="6" class="text-center">No Resources generated yet!</td></tr>
+                            <tr><td colspan="10" class="text-center">No Resources generated yet!</td></tr>
                         @endforelse
                         </tbody>
                         <tfoot>

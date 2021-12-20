@@ -1,4 +1,4 @@
-@extends('liquid-lite::layouts.master')
+@extends('adminr.layouts.master')
 
 @section('title', 'Laravel CMS')
 

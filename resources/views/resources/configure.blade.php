@@ -1,6 +1,6 @@
-@extends('liquid-lite::layouts.master')
+@extends('adminr.layouts.master')
 
-@section('title', __('Configure') . ' ' . $crud->name)
+@section('title', __('Configure') . ' ' . $resource->name)
 
 @push('scopedCss')
 
@@ -9,7 +9,7 @@
 @section('content')
 <div class="container-fluid" id="app">
     <div class="d-sm-flex justify-content-between align-items-center mb-3">
-        <h3 class="text-dark mb-0">{{ __('Configure') }} {{ $crud->name }}</h3>
+        <h3 class="text-dark mb-0">{{ __('Configure') }} {{ $resource->name }}</h3>
         <div>
             <a href="{{ url()->previous() }}" class="btn btn-primary btn-sm d-none d-sm-inline-block">
                 <svg class="c-icon mr-1">
@@ -19,7 +19,7 @@
             </a>
         </div>
     </div>
-    <configure-resource routes="{{ json_encode($routes) }}" crudid="{{$crud->id}}"></configure-resource>
+    <configure-resource routes="{{ json_encode($routes) }}" crudid="{{$resource->id}}"></configure-resource>
 </div>
 @endsection
 

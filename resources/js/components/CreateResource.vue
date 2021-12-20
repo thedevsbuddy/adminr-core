@@ -212,7 +212,7 @@
                             <td colspan="5">
                                 <div class="form-group mb-0 text-center position-relative">
                                     <button type="button" @click.stop="migration.configuring = !migration.configuring"
-                                            class="btn btn-sm btn-primary">
+                                            class="btn btn-sm btn-primary" :class="{'disabled': migration.data_type === 'file'}" :disabled="migration.data_type === 'file'">
                                         <i class="fas fa-cog"></i> Configure
                                     </button>
                                     <transition name="fade">
@@ -294,7 +294,7 @@
                 isGenerating: false,
                 model: '',
                 softdeletes: false,
-                build_api: false,
+                build_api: true,
                 dataTypes: this.datatypes,
                 migrations: [
                     {
@@ -309,8 +309,6 @@
                         enum_values: '',
                         can_search: false,
                         unique: false,
-                        related_model: null,
-                        relationship_type: null,
                         default: null,
                         configuring: false,
                         slug_from: null,
@@ -337,8 +335,6 @@
                     can_search: false,
                     enum_values: '',
                     unique: false,
-                    related_model: null,
-                    relationship_type: null,
                     default: null,
                     configuring: false,
                     slug_from: null,

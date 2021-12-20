@@ -3,6 +3,7 @@
 namespace Devsbuddy\AdminrCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Devsbuddy\AdminrCore\Models\Menu;
 use Devsbuddy\AdminrCore\Models\Resource;
 use Devsbuddy\AdminrCore\Database;
 use Devsbuddy\AdminrCore\Services\BuildControllersService;
@@ -10,7 +11,7 @@ use Devsbuddy\AdminrCore\Services\BuildMigrationService;
 use Devsbuddy\AdminrCore\Services\BuildModelService;
 use Devsbuddy\AdminrCore\Services\BuildRoutesService;
 use Devsbuddy\AdminrCore\Services\BuildViewsService;
-use Devsbuddy\AdminrCore\Services\CreateCrudRecordService;
+use Devsbuddy\AdminrCore\Services\ResourceService;
 use Devsbuddy\AdminrCore\Traits\HasStubs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -22,7 +23,7 @@ class BuilderController extends Controller
 {
     use HasStubs;
 
-    public $createCrudRecordService;
+    public $resourceService;
     public $buildControllersService;
     public $buildModelService;
     public $buildMigrationService;
@@ -31,12 +32,12 @@ class BuilderController extends Controller
 
     public function __construct()
     {
-//        $this->createCrudRecordService = new CreateCrudRecordService();
+        $this->resourceService = new ResourceService();
         $this->buildControllersService = new BuildControllersService();
         $this->buildModelService = new BuildModelService();
         $this->buildMigrationService = new BuildMigrationService();
         $this->buildRouteService = new BuildRoutesService();
-//        $this->buildViewsService = new BuildViewsService();
+        $this->buildViewsService = new BuildViewsService();
     }
 
     public function index()
@@ -51,13 +52,12 @@ class BuilderController extends Controller
 
     public function build(Request $request)
     {
-//        if($this->resourceExists($request)){
-//            return response()->json(['status' => 'error', 'message' => 'CRUD already exist!'], 200);
-//        }
+        if($this->resourceExists($request)){
+            return response()->json(['status' => 'error', 'message' => 'Resource already exist!'], 200);
+        }
 
         try{
-
-//            $this->createCrudRecordService->store($request);
+            $this->resourceService->store($request);
 
             $this->buildControllersService
                 ->prepare($request)
@@ -65,36 +65,32 @@ class BuilderController extends Controller
                 ->buildController()
                 ->cleanUp();
 
-
-//            $this->createCrudRecordService->update([
-//                'name' => Str::title($this->buildControllersService->modelEntities),
-//                'controllers' => [
-//                    'api' => $this->buildControllersService->controllerName,
-//                    'admin' => $this->buildControllersService->controllerName,
-//                ],
-//                'menu' => [
-//                    'label' => Str::studly($this->buildControllersService->modelEntities),
-//                    'route' => 'adminr.' . $this->buildControllersService->modelEntities . '.index'
-//                ],
-//                'table' => $this->buildControllersService->tableName,
-//                'payload' => [
-//                    'model' => $this->buildControllersService->modelName . '.php',
-//                    'views' => [
-//                        'index' => 'admin/' . $this->buildControllersService->modelEntities . '/index.blade.php',
-//                        'create' => 'admin/' . $this->buildControllersService->modelEntities . '/create.blade.php',
-//                        'edit' => 'admin/' . $this->buildControllersService->modelEntities . '/edit.blade.php',
-//                    ],
-//                    'migration' => config('liquid.api.version'),
-//                    'controllers' => [
-//                        'api' => $this->buildControllersService->controllerName . '.php',
-//                        'admin' => $this->buildControllersService->controllerName . '.php',
-//                    ],
-//                    'routes' => [
-//                        'api' => $this->buildControllersService->modelEntities . '/' . $this->buildControllersService->modelEntities . '.json',
-//                        'admin' => $this->buildControllersService->modelEntities . '/' . $this->buildControllersService->modelEntities . '.json',
-//                    ],
-//                ],
-//            ]);
+            $this->resourceService->update([
+                'name' => Str::title($this->buildControllersService->modelEntities),
+                'controllers' => [
+                    'api' => $this->buildControllersService->controllerName,
+                    'admin' => $this->buildControllersService->controllerName,
+                ],
+                'table' => $this->buildControllersService->tableName,
+                'payload' => [
+                    'model' => $this->buildControllersService->modelName . '.php',
+                    'has_api' => $request->get('build_api'),
+                    'views' => [
+                        'index' => 'adminr/' . $this->buildControllersService->modelEntities . '/index.blade.php',
+                        'create' => 'adminr/' . $this->buildControllersService->modelEntities . '/create.blade.php',
+                        'edit' => 'adminr/' . $this->buildControllersService->modelEntities . '/edit.blade.php',
+                    ],
+                    'migration' => null,
+                    'controllers' => [
+                        'api' => $this->buildControllersService->controllerName . '.php',
+                        'admin' => $this->buildControllersService->controllerName . '.php',
+                    ],
+                    'routes' => [
+                        'api' => $this->buildControllersService->modelEntities . '/' . $this->buildControllersService->modelEntities . '.json',
+                        'admin' => $this->buildControllersService->modelEntities . '/' . $this->buildControllersService->modelEntities . '.json',
+                    ],
+                ],
+            ]);
 
             $this->buildModelService
                 ->prepare($request)
@@ -105,33 +101,40 @@ class BuilderController extends Controller
                 ->prepare($request)
                 ->buildMigration()
                 ->cleanUp();
-//
-//            $this->createCrudRecordService->update([
-//                'migration' => $this->buildMigrationService->migrationFileName,
-//                'payload->migration' => $this->buildMigrationService->migrationFileName . '.php'
-//            ]);
-//
+
+            $this->resourceService->update([
+                'migration' => $this->buildMigrationService->migrationFileName,
+                'payload->migration' => $this->buildMigrationService->migrationFileName . '.php'
+            ]);
+
             $this->buildRouteService
                 ->prepare($request)
                 ->buildApiRoute()
                 ->buildAdminRoute()
                 ->cleanUp();
 
-//            $this->buildViewsService
-//                ->prepare($request)
-//                ->buildIndexView()
-//                ->buildCreateView()
-//                ->buildEditView()
-//                ->cleanUp();
-//
-//            Artisan::call('migrate');
+            $this->buildViewsService
+                ->prepare($request)
+                ->buildIndexView()
+                ->buildCreateView()
+                ->buildEditView()
+                ->cleanUp();
 
-            return response()->json(['status' => 'success', 'message' => 'CRUD generated Successfully!'], 200);
+            Menu::firstOrCreate([
+                'name' => 'resource',
+                'label' => Str::title(Str::replace('_', ' ', $this->buildControllersService->modelEntities)),
+                'route' => $this->buildControllersService->modelEntities . '.index',
+                'resource' => $this->resourceService->id,
+            ]);
+
+            Artisan::call('migrate');
+
+            return response()->json(['status' => 'success', 'message' => 'Resource generated Successfully!'], 200);
         } catch (\Exception $e){
-//            $this->rollbackAll();
+            $this->rollbackAll();
             return response()->json(['status' => 'error', 'message' => 'Error: ' . $e->getMessage()], 200);
         } catch (\Error $e){
-//            $this->rollbackAll();
+            $this->rollbackAll();
             return response()->json(['status' => 'error', 'message' => 'Error: ' . $e->getMessage()], 200);
         }
     }
@@ -144,9 +147,9 @@ class BuilderController extends Controller
      */
     private function resourceExists(Request $request)
     {
-        $crud = Resource::where('name', Str::snake($request->get('model')))->where('model', $request->get('model'))->first();
+        $resource = Resource::where('name', Str::snake($request->get('model')))->where('model', $request->get('model'))->first();
         $model = File::exists(app_path() . "/Models/".Str::title($request->get('model')).".php");
-        if(!is_null($crud)){
+        if(!is_null($resource)){
            return true;
         }
         if($model){
@@ -166,7 +169,10 @@ class BuilderController extends Controller
         $this->buildMigrationService->rollback()->cleanUp();
         $this->buildRouteService->rollback()->cleanUp();
         $this->buildViewsService->rollback()->cleanUp();
-        $this->createCrudRecordService->rollback();
+        $this->resourceService->rollback();
     }
 }
+
+
+
 

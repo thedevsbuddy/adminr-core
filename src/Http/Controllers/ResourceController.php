@@ -4,7 +4,7 @@ namespace Devsbuddy\AdminrCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Devsbuddy\AdminrCore\Models\Resource;
-use Devsbuddy\AdminrCore\Services\CreateCrudRecordService;
+use Devsbuddy\AdminrCore\Services\ResourceService;
 use Devsbuddy\AdminrCore\Traits\HasResponse;
 use Devsbuddy\AdminrCore\Traits\HasStubs;
 use Illuminate\Http\Request;
@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 
-class ResourceController extends Controller
+class ResourceController  extends Controller
 {
     use HasStubs, HasResponse;
 
@@ -25,7 +25,7 @@ class ResourceController extends Controller
 
     public function index()
     {
-        $resources = Resource::paginate(10);
+        $resources = Resource::with('menu')->paginate(10);
         return view('adminr-core::resources.index', compact('resources'));
     }
 
@@ -58,19 +58,19 @@ class ResourceController extends Controller
     {
         try{
             $id = decrypt($id);
-            $crud = Resource::findOrFail($id);
-            $routes = json_decode(File::get(base_path() . '/routes/liquid/api/' . $crud->payload->routes->api));
-            return view('liquid-lite::cruds.configure', compact('crud', 'routes'));
+            $resource = Resource::findOrFail($id);
+            $routes = json_decode(File::get(base_path() . '/routes/adminr/api/' . $resource->payload->routes->api));
+            return view('adminr-core::resources.configure', compact('resource', 'routes'));
         } catch (\Exception $e){
             return back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
 
 
-    public function getResource(Resource $resource)
+    public function getResource($id)
     {
         try{
-
+            $resource = Resource::where('id', $id)->first();
             return $this->success($resource, 200);
         } catch (\Exception $e){
             return $this->error($e->getMessage(), 500);
@@ -79,8 +79,9 @@ class ResourceController extends Controller
         }
     }
 
-    public function updateApiMiddlewares(Resource $resource, Request $request)
+    public function updateApiMiddlewares($id, Request $request)
     {
+        $resource = Resource::where('id', $id)->first();
         if($this->updateRouteFile($resource, $request)){
             return $this->successMessage("API public routes permission updated!", 200);
         } else {
@@ -88,9 +89,10 @@ class ResourceController extends Controller
         }
     }
 
-    private function updateRouteFile(Resource $resource, Request $request)
+    private function updateRouteFile($id, Request $request)
     {
-        $routeFile = (array) json_decode(File::get(base_path() . '/routes/liquid/api/'.Str::lower($resource->name) . '/' . Str::lower($resource->name) .'.json'));
+        $resource = Resource::where('id', $id)->first();
+        $routeFile = (array) json_decode(File::get(base_path() . '/routes/adminr/api/'.Str::lower($resource->name) . '/' . Str::lower($resource->name) .'.json'));
 
         foreach ($request->all() as $key => $method){
             if($method){
@@ -105,17 +107,22 @@ class ResourceController extends Controller
         }
 
 
-        File::put(base_path() . '/routes/liquid/api/' . Str::lower($resource->name) . '/' . Str::lower($resource->name) . '.json',  json_encode((object) $routeFile));
+        File::put(base_path() . '/routes/adminr/api/' . Str::lower($resource->name) . '/' . Str::lower($resource->name) . '.json',  json_encode((object) $routeFile));
 
         return true;
     }
 
-    public function destroy(Resource $crud)
+    /**
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy($id)
     {
-        $crudService = new CreateCrudRecordService();
-        $crudService->rollback($crud->id);
-        $crud->delete();
-        return back()->with('success', 'Crud deleted successfully!');
+        $resource = Resource::where('id', $id)->first();
+        $resourceService = new ResourceService();
+        $resourceService->rollback($resource->id);
+        $resource->delete();
+        return back()->with('success', 'Resource deleted successfully!');
     }
 }
 

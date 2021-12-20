@@ -8,7 +8,7 @@ class Database extends Model
 {
 
     /**
-     * Currently supported datatypes
+     * Currently supported datatype
      * */
     static public function dataTypes()
     {
@@ -99,5 +99,35 @@ class Database extends Model
             'belongsToMany',
             'hasManyThrough'
         ];
+    }
+
+    static public function htmlDataType($type = null){
+        $types = [
+            'slug' => 'text',
+            'increments' => 'number',
+            'bigIncrements' => 'number',
+            'string' => 'text',
+            'file' => 'file',
+            'text' => 'textarea',
+            'longText' => 'textarea',
+            'integer' => 'number',
+            'tinyInteger' => 'number',
+            'unsignedInteger' => 'number',
+            'unsignedTinyInteger' => 'number',
+            'unsignedBigInteger' => 'number',
+            'double' => 'number',
+            'boolean' => 'checkbox',
+            'enum' => 'select',
+            'json' => 'text',
+            'date' => 'date',
+            'dateTime' => 'datetime_local',
+            'time' => 'time',
+            'timestamp' => 'datetime_local',
+        ];
+
+        if ($type == null){
+            return $types;
+        }
+        return $types[$type];
     }
 }

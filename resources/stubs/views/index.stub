@@ -1,4 +1,4 @@
-@extends('liquid-lite::layouts.master')
+@extends('adminr.layouts.master')
 
 @section('title', 'Manage {{MODEL_ENTITIES}}')
 
@@ -19,7 +19,7 @@
 
                     <div class="d-flex align-items-center">
                         {{TRASHED_BUTTONS}}
-                        <a href="{{ route('adminr.{{MODEL_ENTITIES}}.create') }}" class="btn btn-sm btn-primary m-0">
+                        <a href="{{ route(config('app.route_prefix').'.{{MODEL_ENTITIES}}.create') }}" class="btn btn-sm btn-primary m-0">
                              <svg class="h-3 w-3">
                                  <use xlink:href="{{ coreUiIcon('cil-plus') }}"></use>
                              </svg>
@@ -44,36 +44,36 @@
                                     <td>{{ ${{MODEL_ENTITY}}->created_at->format('jS M, Y') }}</td>
                                     <td>{{ ${{MODEL_ENTITY}}->updated_at->format('jS M, Y') }}</td>
                                     <td>
-                                        <a href="{{ route('adminr.{{MODEL_ENTITIES}}.edit', ${{MODEL_ENTITY}}->id) }}" class="btn btn-sm btn-icon btn-primary" title="Edit">
-                                            <svg class="h-3 w-3">
-                                                <use xlink:href="{{ coreUiIcon('cil-pen') }}"></use>
-                                            </svg>
-                                        </a>
                                         @if(request()->has('trashed') && request()->get('trashed') == "true")
-                                            <a href="javascript:void(0)" onclick="event.preventDefault();document.getElementById('{{MODEL_ENTITY}}_restore_{{ ${{MODEL_ENTITY}}->id }}').submit();" class="btn btn-sm btn-icon btn-success" title="Restore">
+                                            <a href="javascript:void(0)" onclick="event.preventDefault();document.getElementById('{{MODEL_ENTITY}}_restore_{{ ${{MODEL_ENTITY}}->id }}').submit();" class="btn btn-sm mr-2 btn-icon btn-success" title="Restore">
                                                 <svg class="h-3 w-3" style="transform: rotateY(180deg)">
                                                     <use xlink:href="{{ coreUiIcon('cil-reload') }}"></use>
                                                 </svg>
                                             </a>
-                                            <form class="d-none" id="{{MODEL_ENTITY}}_restore_{{ ${{MODEL_ENTITY}}->id }}" action="{{ route('adminr.{{MODEL_ENTITIES}}.restore', ${{MODEL_ENTITY}}->id) }}" method="POST">
+                                            <form class="d-none" id="{{MODEL_ENTITY}}_restore_{{ ${{MODEL_ENTITY}}->id }}" action="{{ route(config('app.route_prefix').'.{{MODEL_ENTITIES}}.restore', ${{MODEL_ENTITY}}->id) }}" method="POST">
                                                 @csrf
                                             </form>
-                                            <a href="#" data-form="{{MODEL_ENTITY}}_forceDelete_{{ ${{MODEL_ENTITY}}->id }}" class="btn btn-sm btn-icon btn-danger delete-item" title="Delete permanently">
+                                            <a href="#" data-form="{{MODEL_ENTITY}}_forceDelete_{{ ${{MODEL_ENTITY}}->id }}" class="btn btn-sm mr-2 btn-icon btn-danger delete-item" title="Delete permanently">
                                                 <svg class="h-3 w-3">
                                                     <use xlink:href="{{ coreUiIcon('cil-trash') }}"></use>
                                                 </svg>
                                             </a>
-                                            <form class="d-none" id="{{MODEL_ENTITY}}_forceDelete_{{ ${{MODEL_ENTITY}}->id }}" action="{{ route('adminr.{{MODEL_ENTITIES}}.force-destroy', ${{MODEL_ENTITY}}->id) }}" method="POST">
+                                            <form class="d-none" id="{{MODEL_ENTITY}}_forceDelete_{{ ${{MODEL_ENTITY}}->id }}" action="{{ route(config('app.route_prefix').'.{{MODEL_ENTITIES}}.force-destroy', ${{MODEL_ENTITY}}->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                             </form>
                                         @else
-                                            <a href="#" data-form="{{MODEL_ENTITY}}_{{ ${{MODEL_ENTITY}}->id }}" class="btn btn-sm btn-icon btn-danger delete-item" title="Delete">
+                                            <a href="{{ route(config('app.route_prefix').'.{{MODEL_ENTITIES}}.edit', ${{MODEL_ENTITY}}->id) }}" class="btn btn-sm mr-2 btn-icon btn-primary" title="Edit">
+                                                <svg class="h-3 w-3">
+                                                    <use xlink:href="{{ coreUiIcon('cil-pen') }}"></use>
+                                                </svg>
+                                            </a>
+                                            <a href="#" data-form="{{MODEL_ENTITY}}_{{ ${{MODEL_ENTITY}}->id }}" class="btn btn-sm mr-2 btn-icon btn-danger delete-item" title="Delete">
                                                 <svg class="h-3 w-3">
                                                     <use xlink:href="{{ coreUiIcon('cil-trash') }}"></use>
                                                 </svg>
                                             </a>
-                                            <form class="d-none" id="{{MODEL_ENTITY}}_{{ ${{MODEL_ENTITY}}->id }}" action="{{ route('adminr.{{MODEL_ENTITIES}}.destroy', ${{MODEL_ENTITY}}->id) }}" method="POST">
+                                            <form class="d-none" id="{{MODEL_ENTITY}}_{{ ${{MODEL_ENTITY}}->id }}" action="{{ route(config('app.route_prefix').'.{{MODEL_ENTITIES}}.destroy', ${{MODEL_ENTITY}}->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                             </form>

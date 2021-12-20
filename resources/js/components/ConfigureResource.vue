@@ -118,7 +118,7 @@
             getResource() {
                 this.isBusy = true;
 
-                axios.get(BASE_URL + "/adminr/get-resource/" + this.crudid)
+                axios.get(BASE_URL + "/" + ROUTE_PREFIX + "/get-resource/" + this.crudid)
                     .then(response => this.resource = response.data.data)
                     .catch(err => console.error(err));
 
@@ -126,7 +126,7 @@
             },
 
             getRoles() {
-                axios.get(BASE_URL + "/adminr/get-roles")
+                axios.get(BASE_URL + "/" + ROUTE_PREFIX + "/get-roles")
                     .then(response => {
                         this.roles = response.data.data;
                         this.getPermissions();
@@ -135,7 +135,7 @@
             },
 
             getPermissions() {
-                axios.get(BASE_URL + "/adminr/get-permissions/" + this.crudid)
+                axios.get(BASE_URL + "/" + ROUTE_PREFIX + "/get-permissions/" + this.crudid)
                     .then(response => {
                         this.permissions = response.data.data.map((p) => {
                             return {
@@ -159,7 +159,7 @@
             },
 
             updateApiMiddlewares() {
-                axios.post(BASE_URL + "/adminr/update-api-middleware/" + this.crudid, this.middlewares)
+                axios.post(BASE_URL + "/" + ROUTE_PREFIX + "/update-api-middleware/" + this.crudid, this.middlewares)
                     .then(response => {
                         toastr.success(response.data.message);
                         // console.log(response.data);
@@ -198,7 +198,7 @@
                     this.resourcePermissions["\""+role+"\""].push(permission);
                 }
 
-                axios.post(BASE_URL + "/adminr/sync-role-permissions", {resource: this.resource.name, permissions: JSON.stringify({...this.resourcePermissions})})
+                axios.post(BASE_URL + "/" + ROUTE_PREFIX + "/sync-role-permissions", {resource: this.resource.name, permissions: JSON.stringify({...this.resourcePermissions})})
                     .then(response => toastr.success(response.data.message))
                     .catch(err => console.error(err));
             }

@@ -170,22 +170,26 @@ class BuildRoutesService extends AdminrCoreService
      */
     public function rollback()
     {
-        if (!is_null($this->modelEntities)) {
+        if (isset($this->modelEntities) && !is_null($this->modelEntities)) {
             $this->deleteDir(base_path() . '/routes/adminr/admin/' . $this->modelEntities);
             $this->deleteDir(base_path() . '/routes/adminr/api/' . $this->modelEntities);
-        }
 
-        $adminRoutesStorage = (array)json_decode(File::get($this->adminRoutePath));
-        if (isset($adminRoutesStorage[$this->modelEntities])) {
-            unset($adminRoutesStorage[$this->modelEntities]);
-        }
-        File::put($this->adminRoutePath, json_encode((object)$adminRoutesStorage));
+            if (isset($this->adminRoutePath) && !is_null($this->adminRoutePath)) {
+                $adminRoutesStorage = (array)json_decode(File::get($this->adminRoutePath));
+                if (isset($adminRoutesStorage[$this->modelEntities])) {
+                    unset($adminRoutesStorage[$this->modelEntities]);
+                }
+                File::put($this->adminRoutePath, json_encode((object)$adminRoutesStorage));
+            }
 
-        $apiRoutesStorage = (array)json_decode(File::get($this->apiRoutePath));
-        if (isset($apiRoutesStorage[$this->modelEntities])) {
-            unset($apiRoutesStorage[$this->modelEntities]);
+            if (isset($this->apiRoutePath) && !is_null($this->apiRoutePath)) {
+                $apiRoutesStorage = (array)json_decode(File::get($this->apiRoutePath));
+                if (isset($apiRoutesStorage[$this->modelEntities])) {
+                    unset($apiRoutesStorage[$this->modelEntities]);
+                }
+                File::put($this->apiRoutePath, json_encode((object)$apiRoutesStorage));
+            }
         }
-        File::put($this->apiRoutePath, json_encode((object)$apiRoutesStorage));
         return $this;
     }
 
