@@ -2,8 +2,10 @@
 
 namespace Devsbuddy\AdminrCore;
 
-use App\Relations\OneToOneRelation;
+use App\Relations\HasOneRelation;
 use Devsbuddy\AdminrCore\ViewComposers\MenuComposer;
+use Devsbuddy\AdminrCore\ViewComposers\RelationViewComposer;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -38,17 +40,14 @@ class AdminrCoreServiceProvider extends ServiceProvider
         }
 
         // Load helpers file
-        if (file_exists(__DIR__ . '/Http/helpers.php'))
-        {
+        if (file_exists(__DIR__ . '/Http/helpers.php')) {
             require_once __DIR__ . '/Http/helpers.php';
         }
 
-        View::composer('*', MenuComposer::class);
-
         /**
-         * Load all the One To One Relationship
+         * Load menus and compose to all views
          */
-        (new OneToOneRelation())->render();
+        View::composer('*', MenuComposer::class);
 
     }
 
@@ -58,7 +57,7 @@ class AdminrCoreServiceProvider extends ServiceProvider
     public function register()
     {
         // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__.'/../config/adminr-core.php', 'adminr-core');
+        $this->mergeConfigFrom(__DIR__ . '/../config/adminr-core.php', 'adminr-core');
 
         // Register the main class to use with the facade
         $this->app->singleton('adminr-core', function () {

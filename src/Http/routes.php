@@ -2,6 +2,7 @@
 
 use Devsbuddy\AdminrCore\Http\Controllers\BuilderController;
 use Devsbuddy\AdminrCore\Http\Controllers\MenuComposerController;
+use Devsbuddy\AdminrCore\Http\Controllers\RelationshipController;
 use Devsbuddy\AdminrCore\Http\Controllers\ResourceController;
 use Devsbuddy\AdminrCore\Http\Controllers\RolePermissionController;
 use Illuminate\Support\Facades\Route;
@@ -20,5 +21,6 @@ Route::group(['prefix' => config('app.route_prefix'), 'middleware' => ['web'], '
         Route::get('/get-roles', [RolePermissionController::class, 'getRoles']);
         Route::get('/get-permissions/{id}', [RolePermissionController::class, 'getPermissions']);
         Route::post('/sync-role-permissions', [RolePermissionController::class, 'assignPermissionsToRoles']);
+
     });
 });

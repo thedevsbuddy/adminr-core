@@ -1,15 +1,14 @@
-<div class="form-group col-md-6 col-xs-6 col-lg-6  has-feedback {{ $errors->has('{{RELATION_FIELD}}') ? 'has-error' : '' }}">
-	<label class="control-label"> {{RELATION_CLASS}} <span class="required">*</span></label>
-	
-    <select name='{{RELATION_FIELD}}' class ='form-control selectpicker' placeholder='Please select a {{RELATION_ENTITY}}' data-live-search='true' id ='{{RELATION_FIELD}}' >
-        @foreach(${{RELATION_ENTITIES}} as $entityId => $entityValue)
-            <option value="{{ $entityId }}" {{ ${{MODEL_ENTITY}}->{{RELATION_FIELD}} === $entityId ? 'selected' : '' }} >{{ $entityValue }}</option>
+<div class="form-group">
+	<label for="{{RELATION_ENTITIES}}">{{RELATION_ENTITIES}} <span class="text-danger">*</span></label>
+    <select name="{{RELATION_FIELD}}" class="form-control select2" id ="{{RELATION_ENTITIES}}">
+        <option value="">--Select a {{RELATION_ENTITY}}--</option>
+        @foreach(${{RELATION_ENTITIES}} as ${{RELATION_ENTITY}})
+            <option value="{{ ${{RELATION_ENTITY}}->id }}">{{ ${{RELATION_ENTITY}}->{{ENTITY_LABEL}} }}</option>
         @endforeach
     </select>
-
-  @if ($errors->has('{{RELATION_FIELD}}'))
-    <span class="help-block">
-      <strong>{{ $errors->first('{{RELATION_FIELD}}') }}</strong>
-    </span>
-  @endif
+    @if ($errors->has("{{RELATION_FIELD}}"))
+        <span class="text-danger font-weight-bold">
+            <strong>{{ $errors->first("{{RELATION_FIELD}}") }}</strong>
+        </span>
+    @endif
 </div>

@@ -90,5 +90,21 @@ trait HasStubs {
         return null;
     }
 
+    /**
+     * @param $relationFile
+     * @param bool $getPath
+     * @return string|null
+     */
+    public function getRelationStub($relationFile, $getPath = false)
+    {
+        if(File::exists($this->stubsDirectory . '/relations/' . $relationFile . '.stub')){
+            if($getPath){
+                return $this->stubsDirectory . '/relations/' . $relationFile . '.stub';
+            }
+            return File::get($this->stubsDirectory . '/relations/' . $relationFile . '.stub');
+        }
+        return null;
+    }
+
 
 }

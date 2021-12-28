@@ -17,15 +17,16 @@ class RolePermissionController extends Controller
 
     public function getRoles()
     {
-        return $this->success(\Spatie\Permission\Models\Role::select('id', 'name')
-            ->where('name', '!=', 'super_admin')
+        return $this->success(Role::select('id', 'name')
+            ->whereNotIn('name', ['developer', 'super_admin'])
             ->get(), 200);
     }
 
-    public function getPermissions(Resource $resource)
+    public function getPermissions($id)
     {
-        $permissions = $this->success(\Spatie\Permission\Models\Permission::select('id', 'name')
-            ->where('resource', strtolower($resource->name))
+        $resource = Resource::where('id', $id)->first();
+        $permissions = $this->success(Permission::select('id', 'name')
+            ->where('resource', strtolower($resource->id))
             ->orderBy('name', 'ASC')
             ->with(['roles:id'])
             ->get(), 200);

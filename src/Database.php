@@ -93,11 +93,11 @@ class Database extends Model
     static public function relationshipIdentifiers()
     {
         return [
-            'hasMany',
             'hasOne',
+            'hasMany',
             'belongsTo',
             'belongsToMany',
-            'hasManyThrough'
+            'manyToMany'
         ];
     }
 

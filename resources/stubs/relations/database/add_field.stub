@@ -13,8 +13,9 @@ class {{MIGRATION_CLASS}} extends Migration
      */
     public function up()
     {
-        Schema::table('{{MODEL_ENTITIES_TABLE}}', function (Blueprint $table) {
-            $table->integer('{{RELATION_ENTITY_FIELD}}_id')->nullable();
+        Schema::table('{{TABLE}}', function (Blueprint $table) {
+            $table->unsignedBigInteger('{{RELATION_FIELD}}')->nullable();
+            $table->foreign('{{RELATION_FIELD}}')->references('id')->on('{{FOREIGN_MODEL}}');
         });
     }
 
@@ -25,8 +26,8 @@ class {{MIGRATION_CLASS}} extends Migration
      */
     public function down()
     {
-        Schema::table('{{MODEL_ENTITIES_TABLE}}', function (Blueprint $table) {
-            $table->dropColumn('{{RELATION_ENTITY_FIELD}}_id');
+        Schema::table('{{TABLE}}', function (Blueprint $table) {
+            $table->dropColumn('{{RELATION_FIELD}}');
         });
     }
 }

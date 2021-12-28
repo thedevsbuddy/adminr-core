@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddResourceColumnToPermissionsTable extends Migration
+class CreateMailTemplatesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,12 @@ class AddResourceColumnToPermissionsTable extends Migration
      */
     public function up()
     {
-        Schema::table('permissions', function (Blueprint $table) {
-            $table->unsignedBigInteger('resource')->nullable()->after('guard_name');
+        Schema::create('mail_templates', function (Blueprint $table) {
+            $table->id();
+            $table->string('subject')->unique();
+            $table->string('code')->unique();
+            $table->longText('content');
+            $table->timestamps();
         });
     }
 
@@ -25,8 +29,6 @@ class AddResourceColumnToPermissionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('permissions', function (Blueprint $table) {
-            $table->dropColumn('resource');
-        });
+        Schema::dropIfExists('mail_templates');
     }
 }

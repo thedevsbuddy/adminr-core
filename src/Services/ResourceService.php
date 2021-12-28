@@ -29,41 +29,41 @@ class ResourceService
 
         Permission::firstOrcreate([
             'name' => strtolower($resource->name) . '_list',
-            'resource' => strtolower($resource->name)
+            'resource' => $resource->id
         ]);
         Permission::firstOrcreate([
             'name' => strtolower($resource->name) . '_single',
-            'resource' => strtolower($resource->name)
+            'resource' => $resource->id
         ]);
         Permission::firstOrcreate([
             'name' => strtolower($resource->name) . '_create',
-            'resource' => strtolower($resource->name)
+            'resource' => $resource->id
         ]);
         Permission::firstOrcreate([
             'name' => strtolower($resource->name) . '_edit',
-            'resource' => strtolower($resource->name)
+            'resource' => $resource->id
         ]);
         Permission::firstOrcreate([
             'name' => strtolower($resource->name) . '_store',
-            'resource' => strtolower($resource->name)
+            'resource' => $resource->id
         ]);
         Permission::firstOrcreate([
             'name' => strtolower($resource->name) . '_update',
-            'resource' => strtolower($resource->name)
+            'resource' => $resource->id
         ]);
         Permission::firstOrcreate([
             'name' => strtolower($resource->name) . '_destroy',
-            'resource' => strtolower($resource->name)
+            'resource' => $resource->id
         ]);
 
         if ($request->get('softdeletes')) {
             Permission::firstOrcreate([
                 'name' => strtolower($resource->name) . '_restore',
-                'resource' => strtolower($resource->name)
+                'resource' => $resource->id
             ]);
             Permission::firstOrcreate([
                 'name' => strtolower($resource->name) . '_force_destroy',
-                'resource' => strtolower($resource->name)
+                'resource' => $resource->id
             ]);
         }
 

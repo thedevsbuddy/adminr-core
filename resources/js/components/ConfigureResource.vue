@@ -6,7 +6,7 @@
                     <p class="card-title m-0">Manage Admin Panel Permissions for <strong v-if="resource">{{ resource.name }}</strong></p>
                 </div>
                 <div class="card-body p-0">
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-striped table-bordered m-0">
                         <thead>
                         <tr>
                             <th>Permissions</th>
@@ -56,7 +56,7 @@
                     <p class="card-title m-0">Configure <strong v-if="resource">{{ resource.name }}</strong> API Resource</p>
                 </div>
                 <div class="card-body p-0">
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-striped table-bordered m-0">
                         <thead>
                         <tr>
                             <th>Route</th>
@@ -198,7 +198,7 @@
                     this.resourcePermissions["\""+role+"\""].push(permission);
                 }
 
-                axios.post(BASE_URL + "/" + ROUTE_PREFIX + "/sync-role-permissions", {resource: this.resource.name, permissions: JSON.stringify({...this.resourcePermissions})})
+                axios.post(BASE_URL + "/" + ROUTE_PREFIX + "/sync-role-permissions", {resource: this.resource.id, permissions: JSON.stringify({...this.resourcePermissions})})
                     .then(response => toastr.success(response.data.message))
                     .catch(err => console.error(err));
             }
