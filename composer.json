@@ -1,6 +1,6 @@
 {
     "name": "thedevsbuddy/adminr-core",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "A simple yet powerful Laravel project starter with admin panel and CRUD Resources generator.",
     "keywords": [
         "devsbuddy",
