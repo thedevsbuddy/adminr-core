@@ -157,7 +157,8 @@ trait CanManageFiles
      */
     public function deleteDir($path)
     {
-        if (File::isDirectory($path)) {
+        $storageDirs = [storage_path(), storage_path().'/app', storage_path().'/framework'];
+        if (File::isDirectory($path) && !in_array(File::isDirectory($path), $storageDirs)) {
             File::deleteDirectory($path);
         }
         return $this;

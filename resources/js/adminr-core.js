@@ -63,7 +63,6 @@ function readFile(input) {
 
     let ext = $('#' + input.getAttribute('id')).val().split('.').pop().toLowerCase();
 
-    //
     if (input.files.length === 1) {
         if (!arrayContains(ext, imageMimes)) {
             console.log($('#' + input.getAttribute('id')).val());

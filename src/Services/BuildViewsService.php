@@ -229,6 +229,7 @@ class BuildViewsService extends AdminrCoreService
         $stub = str_replace('{{COL_SM}}', "col-sm-" . $migration['col_sm'], $stub);
         $stub = str_replace('{{COL_MD}}', "col-md-" . $migration['col_md'], $stub);
         $stub = str_replace('{{COL_LG}}', "col-lg-" . $migration['col_lg'], $stub);
+        $stub = str_replace('{{OPTIONS_STATEMENT}}', $this->getOptionsStmt($migration), $stub);
         if ($migration['is_rich_text']) {
             $stub = str_replace('{{CKEDITOR_CLASS}}', "ckeditor", $stub);
         } else {
@@ -262,6 +263,7 @@ class BuildViewsService extends AdminrCoreService
     }
 
 
+
     private function getOldFileStatement()
     {
         $oldFileStmt = "";
@@ -277,6 +279,18 @@ class BuildViewsService extends AdminrCoreService
         return $oldFileStmt;
     }
 
+    private function getOptionsStmt($migration)
+    {
+        $optionsStmt = "";
+        if($migration['data_type'] == 'enum'){
+            $optionsStmt .= "<option value=\"\">--Select ".Str::title($migration['field_name'])."--</option>\n\t\t";
+            foreach (preg_split('/[,\s?]+/', $migration['enum_values']) as $val){
+                $optionsStmt .= "<option value=\"".strtolower($val)."\">".Str::title($val)."</option>\n\t\t";
+            }
+        }
+
+        return $optionsStmt;
+    }
     /**
      * Generates image upload statement
      *

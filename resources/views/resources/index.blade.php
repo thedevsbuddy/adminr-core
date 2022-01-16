@@ -66,15 +66,15 @@
                                             <use xlink:href="{{ coreUiIcon('cil-cog') }}"></use>
                                         </svg>
                                     </a>
-                                    <a href="#" data-form="resource_{{ $resource->id }}" class="btn btn-sm btn-icon btn-danger delete-item" title="Delete">
-                                        <svg class="h-3 w-3">
-                                            <use xlink:href="{{ coreUiIcon('cil-trash') }}"></use>
-                                        </svg>
-                                    </a>
-                                    <form class="d-none" id="resource_{{ $resource->id }}" action="{{ route(config('app.route_prefix').'.resources.destroy', $resource->id) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
+{{--                                    <a href="#" data-form="resource_{{ $resource->id }}" class="btn btn-sm btn-icon btn-danger delete-item" title="Delete">--}}
+{{--                                        <svg class="h-3 w-3">--}}
+{{--                                            <use xlink:href="{{ coreUiIcon('cil-trash') }}"></use>--}}
+{{--                                        </svg>--}}
+{{--                                    </a>--}}
+{{--                                    <form class="d-none" id="resource_{{ $resource->id }}" action="{{ route(config('app.route_prefix').'.resources.destroy', $resource->id) }}" method="POST">--}}
+{{--                                        @csrf--}}
+{{--                                        @method('DELETE')--}}
+{{--                                    </form>--}}
                                 </td>
                             </tr>
                         @empty
